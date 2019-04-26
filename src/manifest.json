@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+  "name": "mirigana",
+  "version": "0.2",
+  "description": "Insert furigana for kanji words in Twitter",
+
+  "background": {
+    "scripts": [
+      "lib/kuromoji.js",
+      "background.js"
+    ],
+    "persistent": true
+  },
+
+  "page_action": {
+    "default_popup": "popup.html"
+  },
+
+  "content_scripts": [{
+    "matches": ["https://twitter.com/*"],
+    "js": ["content_scripts/twitter.js"]
+  }],
+
+  "permissions": [
+    "declarativeContent",
+    "https://twitter.com/*"
+  ]
+}
