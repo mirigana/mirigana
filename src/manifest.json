@@ -1,8 +1,13 @@
 {
   "manifest_version": 2,
   "name": "mirigana",
-  "version": "0.3",
+  "version": "0.4",
   "description": "Insert furigana for kanji words in Twitter",
+
+  "icons": {
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
 
   "background": {
     "scripts": [

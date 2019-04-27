@@ -1,4 +1,4 @@
-# mirikana
+# mirigana
 a chrome extension to insert katagana for the tweets
 
 ## Install
