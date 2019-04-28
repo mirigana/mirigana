@@ -1,5 +1,7 @@
 # mirigana
-a chrome extension to insert katagana for the tweets
+a chrome extension to insert katagana for tweets.
+
+![](screenshot/screen1.png)
 
 ## Install
 
