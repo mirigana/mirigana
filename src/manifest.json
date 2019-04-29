@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "mirigana",
-  "version": "0.4",
+  "version": "0.5",
   "description": "Insert furigana for kanji words in Twitter",
 
   "icons": {
@@ -13,7 +13,12 @@
     "scripts": [
       "lib/kuromoji.js",
       "constants.js",
-      "background.js"
+      "background/rule-month.js",
+      "background/rule-date.js",
+      "background/rule-counter.js",
+      "background/rule-purify.js",
+      "background/token-rules.js",
+      "background/background.js"
     ],
     "persistent": true
   },

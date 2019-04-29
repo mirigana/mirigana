@@ -1,10 +1,4 @@
-/* global
-chrome
-kuromoji
-HIRAGANA_SIZE_PERCENTAGE_KEY
-HIRAGANA_SIZE_PERCENTAGE_DEFAULT
-MIRI_EVENTS
-*/
+/* eslint no-unused-vars: 0 */
 
 const SPECIAL_COUNTER_NUMBERS_MAP = {
   一: 1,
@@ -191,7 +185,12 @@ const ruleCounter = (token) => {
     }
 
     const next = token[i + 1];
-    if (curr.pos_detail_1 !== '数' || next.pos_detail_2 !== '助数詞') {
+    if (curr.pos_detail_1 !== '数') {
+      result.push(curr);
+      continue;
+    }
+
+    if (next.pos_detail_2 !== '助数詞') {
       result.push(curr);
       continue;
     }
@@ -224,69 +223,3 @@ const ruleCounter = (token) => {
 
   return result;
 };
-
-const rulePurify = token => token.map(t => ({
-  surface_form: t.surface_form,
-  reading: t.reading,
-}));
-
-const tokenRules = [
-  ruleCounter,
-  rulePurify,
-];
-
-const rebulidToken = (token) => {
-  const result = tokenRules.reduce((ret, rule) => rule(ret), token);
-  return result;
-};
-
-// button should only available in twitter scope
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {
-    chrome.declarativeContent.onPageChanged.addRules([{
-      conditions: [
-        new chrome.declarativeContent.PageStateMatcher({
-          pageUrl: {
-            hostEquals: 'twitter.com',
-          },
-        }),
-      ],
-      actions: [new chrome.declarativeContent.ShowPageAction()],
-    }]);
-  });
-});
-
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  const { event } = request;
-  if (event !== MIRI_EVENTS.INITIALIZED) {
-    return false;
-  }
-  chrome.storage.sync.get(HIRAGANA_SIZE_PERCENTAGE_KEY, (result) => {
-    sendResponse({
-      pct: result[HIRAGANA_SIZE_PERCENTAGE_KEY] || HIRAGANA_SIZE_PERCENTAGE_DEFAULT,
-    });
-  });
-
-  // indicate async callback
-  return true;
-});
-
-kuromoji.builder({ dicPath: 'data/' }).build((error, tokenizer) => {
-  if (error != null) {
-    console.log(error);
-  }
-
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    const { event, text } = request;
-    if (event !== MIRI_EVENTS.REQUEST_TOKEN) {
-      return false;
-    }
-
-    const token = tokenizer.tokenize(text);
-    const result = rebulidToken(token);
-    sendResponse(result);
-
-    // indicate async callback
-    return true;
-  });
-});
