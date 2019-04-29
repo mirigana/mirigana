@@ -32,6 +32,7 @@
     "js": [
       "constants.js",
       "content_scripts/common.js",
+      "content_scripts/clipboard-hook.js",
       "content_scripts/twitter.js"
     ]
   }],

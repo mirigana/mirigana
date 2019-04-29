@@ -4,8 +4,10 @@ MIRI_EVENTS
 
 miri,
 addRuby,
-waitForTimeline,
+waitForTimeline
 appendStyleNode
+
+registerClipboardHook
 */
 
 const registerMutationHook = () => {
@@ -55,6 +57,7 @@ waitForTimeline()
   .then(() => {
     miri.log('timeline loaded.');
     registerMutationHook();
+    registerClipboardHook();
   }).catch((e) => {
     miri.log('timeline load tiemout.');
   });
