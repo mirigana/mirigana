@@ -57,7 +57,6 @@ waitForTimeline()
   .then(() => {
     miri.log('timeline loaded.');
     registerMutationHook();
-    registerClipboardHook();
   }).catch((e) => {
     miri.log('timeline load tiemout.');
   });

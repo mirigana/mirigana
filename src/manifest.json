@@ -13,10 +13,12 @@
     "scripts": [
       "lib/kuromoji.js",
       "constants.js",
-      "background/rule-month.js",
-      "background/rule-date.js",
-      "background/rule-counter.js",
-      "background/rule-purify.js",
+      "background/rules/rule-month.js",
+      "background/rules/rule-date.js",
+      "background/rules/rule-counter.js",
+      "background/rules/rule-famous-people.js",
+      "background/rules/rule-proper-noun.js",
+      "background/rules/rule-purify.js",
       "background/token-rules.js",
       "background/background.js"
     ],
@@ -32,7 +34,6 @@
     "js": [
       "constants.js",
       "content_scripts/common.js",
-      "content_scripts/clipboard-hook.js",
       "content_scripts/twitter.js"
     ]
   }],

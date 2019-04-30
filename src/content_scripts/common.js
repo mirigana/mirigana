@@ -33,11 +33,18 @@ const kanaToHira = (str = '') => str.replace(/[\u30a1-\u30f6]/g, (match) => {
   return String.fromCharCode(chr);
 });
 
+const getKanaTag = tag => `<img alt="${tag}" src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0"></svg>' />`;
+
 const renderKana = hirakana => document.createTextNode(hirakana);
 
 const renderKanji = (hirakana, kanji) => {
   const el = document.createElement('ruby');
-  el.innerHTML = `${kanji}<rt>${hirakana}</rt>`;
+  // const kanaStart = getKanaTag('<%');
+  // const kanaEnd = getKanaTag('%>');
+  const kanaStart = getKanaTag('(');
+  const kanaEnd = getKanaTag(')');
+
+  el.innerHTML = `${kanji}<rt>${kanaStart}${hirakana}${kanaEnd}</rt>`;
   return el;
 };
 
