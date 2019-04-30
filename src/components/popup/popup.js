@@ -47,4 +47,4 @@ chrome.storage.sync.get([HIRAGANA_SIZE_PERCENTAGE_KEY], (result) => {
 size.addEventListener('input', sizeChangeHandler);
 
 const manifestData = chrome.runtime.getManifest();
-ver.textContent = manifestData.version;
+ver.textContent = `ver ${manifestData.version}`;

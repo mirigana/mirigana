@@ -58,7 +58,7 @@ const ruleDate = (token) => {
   for (let i = 0; i < token.length; i++) {
     const curr = token[i];
 
-    if (i === token.length) {
+    if (i >= token.length) {
       result.push(curr);
       continue;
     }

@@ -8,7 +8,6 @@ const PROPER_NOUNS = [
 ];
 
 const getNounToken = (nameToken) => {
-  console.log('nametoken', nameToken);
   const name = nameToken.reduce((a, b) => a + b.surface_form, '');
   const find = PROPER_NOUNS.find(pn => pn.name === name);
   if (!find) {
@@ -36,7 +35,7 @@ const ruleProperNoun = (token) => {
   const result = [];
   for (let i = 0; i < token.length; i++) {
     const curr = token[i];
-    if (i === token.length) {
+    if (i >= token.length) {
       result.push(curr);
       continue;
     }
