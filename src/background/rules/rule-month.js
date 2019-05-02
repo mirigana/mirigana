@@ -36,7 +36,7 @@ const ruleMonth = (token) => {
   for (let i = 0; i < token.length; i++) {
     const curr = token[i];
 
-    if (i >= token.length) {
+    if (i >= token.length - 1) {
       result.push(curr);
       continue;
     }
