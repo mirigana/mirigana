@@ -12,7 +12,7 @@ registerClipboardHook
 
 const registerMutationHook = () => {
   const MAIN_CONTAINER_SELECTOR = 'main';
-  const TL_CONTAINER_SELECTOR = 'section>div>div>div.css-1dbjc4n';
+  const TL_CONTAINER_SELECTOR = 'section>div>div>div';
   const TWEET_ARTICLE_SELECTOR = 'article div[lang=ja]';
 
   const mainContainer = document.querySelector(MAIN_CONTAINER_SELECTOR);
