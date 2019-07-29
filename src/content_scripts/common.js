@@ -11,21 +11,37 @@ const miri = {
 };
 
 // inject the css file into the head element
-const appendStyleNode = (id, pct) => {
+const updateStyleNode = (id, content) => {
   const head = document.querySelector('head');
   const oldNode = document.querySelector(`#${id}`);
-  if (oldNode) {
-    head.removeChild(oldNode);
-  }
 
-  const cssNode = document.createElement('style');
-  cssNode.id = id;
-  cssNode.textContent = `
-ruby > rt {
+  const cssNode = oldNode || document.createElement('style');
+  cssNode.textContent = content;
+
+  if (!oldNode) {
+    cssNode.id = id;
+    head.appendChild(cssNode);
+  }
+};
+
+const updateRubySizeStyle = (id, pct) => {
+  const textContent = `
+rt.furigana {
   font-size: ${pct}%;
 }
 `;
-  head.appendChild(cssNode);
+
+  updateStyleNode(id, textContent);
+};
+
+const updateNoSelectStyle = (id, kanaless) => {
+  const textContent = `
+rt.furigana {
+  user-select: ${kanaless ? 'none' : 'text'};
+}
+`;
+
+  updateStyleNode(id, textContent);
 };
 
 const kanaToHira = (str = '') => str.replace(/[\u30a1-\u30f6]/g, (match) => {
@@ -44,7 +60,7 @@ const renderKanji = (hirakana, kanji) => {
   const kanaStart = getKanaTag('(');
   const kanaEnd = getKanaTag(')');
 
-  el.innerHTML = `${kanji}<rt>${kanaStart}${hirakana}${kanaEnd}</rt>`;
+  el.innerHTML = `${kanji}<rt class="furigana">${kanaStart}${hirakana}${kanaEnd}</rt>`;
   return el;
 };
 

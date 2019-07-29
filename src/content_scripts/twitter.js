@@ -5,9 +5,8 @@ MIRI_EVENTS
 miri,
 addRuby,
 waitForTimeline
-appendStyleNode
-
-registerClipboardHook
+updateRubySizeStyle
+updateNoSelectStyle
 */
 
 const registerMutationHook = () => {
@@ -68,16 +67,19 @@ chrome.runtime.sendMessage(
     event: MIRI_EVENTS.INITIALIZED,
   },
   (response) => {
-    const { pct } = response;
-    appendStyleNode('miri-ruby', pct);
+    const { pct, kanaless } = response;
+    updateRubySizeStyle('miri-ruby', pct);
+    updateNoSelectStyle('miri-no-select', kanaless);
   },
 );
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  const { event, pct } = request;
-  if (event !== MIRI_EVENTS.UPDATE_HIRAGANA_SIZE) {
-    return;
-  }
 
-  appendStyleNode('miri-ruby', pct);
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  const { event, value } = request;
+
+  if (event === MIRI_EVENTS.UPDATE_HIRAGANA_SIZE) {
+    updateRubySizeStyle('miri-ruby', value);
+  } else if (event === MIRI_EVENTS.UPDATE_HIRAGANA_NO_SELECT) {
+    updateNoSelectStyle('miri-no-select', value);
+  }
 });

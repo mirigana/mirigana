@@ -3,6 +3,9 @@ chrome
 kuromoji
 HIRAGANA_SIZE_PERCENTAGE_KEY
 HIRAGANA_SIZE_PERCENTAGE_DEFAULT
+HIRAGANA_NO_SELECTION_KEY
+HIRAGANA_NO_SELECTION_DEFAULT
+
 MIRI_EVENTS
 
 rebulidToken
@@ -29,9 +32,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (event !== MIRI_EVENTS.INITIALIZED) {
     return false;
   }
-  chrome.storage.sync.get(HIRAGANA_SIZE_PERCENTAGE_KEY, (result) => {
+  chrome.storage.sync.get([HIRAGANA_SIZE_PERCENTAGE_KEY, HIRAGANA_NO_SELECTION_KEY], (result) => {
     sendResponse({
       pct: result[HIRAGANA_SIZE_PERCENTAGE_KEY] || HIRAGANA_SIZE_PERCENTAGE_DEFAULT,
+      kanaless: result[HIRAGANA_NO_SELECTION_KEY] || HIRAGANA_NO_SELECTION_DEFAULT,
     });
   });
 
