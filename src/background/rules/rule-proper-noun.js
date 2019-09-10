@@ -35,7 +35,7 @@ const ruleProperNoun = (token) => {
   const result = [];
   for (let i = 0; i < token.length; i++) {
     const curr = token[i];
-    if (i >= token.length) {
+    if (i >= token.length - 1) {
       result.push(curr);
       continue;
     }
@@ -52,6 +52,11 @@ const ruleProperNoun = (token) => {
       if (next.pos !== '名詞') {
         break;
       }
+
+      if (next.pos_detail_1 === '接尾') {
+        break;
+      }
+
       arrName.push(next);
       nameSize += 1;
     }

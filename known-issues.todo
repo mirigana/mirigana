@@ -1,0 +1,15 @@
+ ☐ 笑 in the ends of sentence, should be わら
+ e.g. 最高です！（笑）
+
+ ☐ proper noun support lazy match mode
+ e.g. 令和最初のライブ！いくぜ！
+
+ ☐ build dict with the latest mecab-ipadic-neologd
+
+ ☐ report word frequency
+
+ ☐ reduce the size of dict
+
+ ☐ others
+ https://blanktar.jp/blog/2013/06/mecab-misunderstand-symbol.html
+ https://nymemo.com/mecab/564/
