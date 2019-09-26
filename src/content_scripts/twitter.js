@@ -10,7 +10,7 @@ updateNoSelectStyle
 */
 
 const registerMutationHook = () => {
-  const MAIN_CONTAINER_SELECTOR = 'main';
+  const MAIN_CONTAINER_SELECTOR = '#react-root';
   const TL_CONTAINER_SELECTOR = 'section>div>div>div';
   const TWEET_ARTICLE_SELECTOR = 'article div[lang=ja]';
 
