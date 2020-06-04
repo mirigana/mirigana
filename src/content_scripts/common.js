@@ -8,6 +8,18 @@ const miri = {
   log: (...args) => {
     console.log('[MIRI]', ...args);
   },
+  debug: (...args) => {
+    // console.debug('[MIRI]', ...args);
+  },
+};
+
+const isJapanese = (text) => {
+  if (text.includes('，')) {
+    return false;
+  }
+
+  // https://pisuke-code.com/js-check-hira-kana-kanzi/
+  return /[\u{3000}-\u{301C}\u{3041}-\u{3093}\u{309B}-\u{309E}]/mu.test(text);
 };
 
 // inject the css file into the head element
@@ -146,7 +158,12 @@ const addRuby = (container) => {
       return;
     }
 
-    miri.log('Raw:', textContent);
+    if (!isJapanese(textContent)) {
+      // tweet should be wroten in japanese
+      return;
+    }
+
+    miri.debug('Raw:', textContent);
     chrome.runtime.sendMessage({
       event: MIRI_EVENTS.REQUEST_TOKEN,
       text: textContent,
