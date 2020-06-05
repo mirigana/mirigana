@@ -1,0 +1,18 @@
+{
+  "extension_description": {
+    "message": "Adding furigana to kanji on Twitter",
+    "description": ""
+  },
+  "ui_furigana_size": {
+    "message": "Furigana Size:",
+    "description": ""
+  },
+  "ui_skip_furigana_selection": {
+    "message": "Ignore furigana on selecting text",
+    "description": ""
+  },
+  "ui_feedback": {
+    "message": "Feedback",
+    "description": ""
+  }
+}

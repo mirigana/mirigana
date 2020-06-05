@@ -9,9 +9,7 @@ MIRI_EVENTS
 
 const size = document.querySelector('#size');
 const kana = document.querySelector('#kana');
-
 const textPct = document.querySelector('#textPct');
-const ver = document.querySelector('#ver');
 
 const updatePctLiteral = (pct) => {
   textPct.textContent = pct;
@@ -68,5 +66,20 @@ chrome.storage.sync.get([HIRAGANA_SIZE_PERCENTAGE_KEY, HIRAGANA_NO_SELECTION_KEY
 size.addEventListener('input', sizeChangeHandler);
 kana.addEventListener('change', kanaChangeHandler);
 
+
+const uiVer = document.querySelector('#ver');
+const uiKanaSize = document.querySelector('#ui-kana-size');
+const uiKanaNoSelection = document.querySelector('#ui-kana-no-selection');
+const uiFeedback = document.querySelector('#ui-feedback');
+
 const manifestData = chrome.runtime.getManifest();
-ver.textContent = `ver ${manifestData.version}`;
+uiVer.textContent = `ver ${manifestData.version}`;
+
+const textKanaSize = chrome.i18n.getMessage('ui_furigana_size');
+uiKanaSize.textContent = textKanaSize;
+
+const textKanaNoSelection = chrome.i18n.getMessage('ui_skip_furigana_selection');
+uiKanaNoSelection.textContent = textKanaNoSelection;
+
+const textFeedback = chrome.i18n.getMessage('ui_feedback');
+uiFeedback.textContent = textFeedback;

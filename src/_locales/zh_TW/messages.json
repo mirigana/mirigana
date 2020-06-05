@@ -1,0 +1,18 @@
+{
+  "extension_description": {
+    "message": "為日文推(twitter.com)添加假名標注",
+    "description": ""
+  },
+  "ui_furigana_size": {
+    "message": "假名文字尺寸:",
+    "description": ""
+  },
+  "ui_skip_furigana_selection": {
+    "message": "框選文字時忽略假名",
+    "description": ""
+  },
+  "ui_feedback": {
+    "message": "問題反饋",
+    "description": ""
+  }
+}

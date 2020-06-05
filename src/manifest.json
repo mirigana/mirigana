@@ -1,8 +1,10 @@
 {
   "manifest_version": 2,
   "name": "mirigana",
-  "version": "0.11",
-  "description": "Insert furigana for kanji words in Twitter",
+  "version": "0.13",
+  "default_locale": "zh_CN",
+
+  "description": "__MSG_extension_description__",
 
   "icons": {
     "48": "icons/48.png",
@@ -11,7 +13,7 @@
 
   "background": {
     "scripts": [
-      "lib/kuromoji.js",
+      "vendors/kuromoji.js",
       "constants.js",
       "background/rules/rule-month.js",
       "background/rules/rule-date.js",
@@ -41,7 +43,6 @@
   "permissions": [
     "tabs",
     "storage",
-    "declarativeContent",
-    "https://twitter.com/*"
+    "declarativeContent"
   ]
 }

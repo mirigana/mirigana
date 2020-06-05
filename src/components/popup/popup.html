@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html style="width: 165px">
+<html style="width: 200px">
   <head>
     <style>
       #ver {
@@ -9,19 +9,23 @@
   </head>
   <body>
     <div>
-      Furigana Size: <span id="textPct"></span>%
+      <span id="ui-kana-size"></span>
+      <span id="textPct"></span>%
     </div>
-    <input id="size" type="range" min="50" max="85" step="5" style="width: 145px" />
+    <input id="size" type="range" min="50" max="85" step="5" style="width: 180px" />
 
     <div>&nbsp;</div>
 
     <div>
-      <input id="kana" type="checkbox" /><label for="kana">Ignore furigana on selecting</label>
+      <input id="kana" type="checkbox" />
+      <label for="kana">
+        <span id="ui-kana-no-selection"></span>
+      </label>
     </div>
 
     <div>&nbsp;</div>
     <div>
-      <a href="https://github.com/larvata/mirigana/issues" target="_blank">feedback</a>
+      <a id="ui-feedback" href="https://github.com/larvata/mirigana/issues" target="_blank"></a>
       <span id="ver"></span>
     </div>
 
