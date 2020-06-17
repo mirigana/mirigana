@@ -2,31 +2,63 @@
 <html style="width: 200px">
   <head>
     <style>
-      #ver {
+      .section {
+        padding: 15px 0 0 0;
+      }
+      .section:first-child {
+        padding: 0;
+      }
+
+      .kana-selection input {
+        vertical-align: top;
+      }
+
+      .block {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        float: left;
+        margin: 2px;
+      }
+
+      .color-switcher:after {
+        content: '';
+        display: block;
+        clear: both;
+      }
+
+      .active {
+        outline: 2px solid #F2CA27;
+        outline-offset: -2px;
+        cursor: default;
+      }
+
+      .footer .version {
         float: right;
       }
     </style>
   </head>
   <body>
-    <div>
-      <span id="ui-kana-size"></span>
-      <span id="textPct"></span>%
+    <div class="section kana-size">
+      <span class="literal"></span>
+      <span class="value"></span>
+      %
+      <input type="range" min="50" max="85" step="5" style="width: 180px" />
     </div>
-    <input id="size" type="range" min="50" max="85" step="5" style="width: 180px" />
 
-    <div>&nbsp;</div>
+    <div class="section color-switcher">
+    </div>
 
-    <div>
-      <input id="kana" type="checkbox" />
-      <label for="kana">
-        <span id="ui-kana-no-selection"></span>
+    <div class="section kana-selection">
+      <label>
+        <input class="value" type="checkbox" />
+        <span class="literal"></span>
       </label>
     </div>
 
-    <div>&nbsp;</div>
-    <div>
-      <a id="ui-feedback" href="https://github.com/larvata/mirigana/issues" target="_blank"></a>
-      <span id="ver"></span>
+    <div class="section footer">
+      <a class="feedback" href="https://twitter.com/ctx_mirigana" target="_blank"></a>
+      <span class="version"></span>
     </div>
 
     <script src="../../constants.js"></script>

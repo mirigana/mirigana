@@ -4,11 +4,11 @@
     "description": ""
   },
   "ui_furigana_size": {
-    "message": "Furigana Size:",
+    "message": "Furigana Style:",
     "description": ""
   },
   "ui_skip_furigana_selection": {
-    "message": "Ignore furigana on selecting text",
+    "message": "Ignore furigana on selecting",
     "description": ""
   },
   "ui_feedback": {

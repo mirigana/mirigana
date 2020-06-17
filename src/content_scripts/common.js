@@ -13,14 +13,14 @@ const miri = {
   },
 };
 
-const isJapanese = (text) => {
-  if (text.includes('，')) {
-    return false;
-  }
+// const isJapanese = (text) => {
+//   if (text.includes('，')) {
+//     return false;
+//   }
 
-  // https://pisuke-code.com/js-check-hira-kana-kanzi/
-  return /[\u{3000}-\u{301C}\u{3041}-\u{3093}\u{309B}-\u{309E}]/mu.test(text);
-};
+//   // https://pisuke-code.com/js-check-hira-kana-kanzi/
+//   return /[\u{3000}-\u{301C}\u{3041}-\u{3093}\u{309B}-\u{309E}]/mu.test(text);
+// };
 
 // inject the css file into the head element
 const updateStyleNode = (id, content) => {
@@ -40,6 +40,16 @@ const updateRubySizeStyle = (id, pct) => {
   const textContent = `
 rt.furigana {
   font-size: ${pct}%;
+}
+`;
+
+  updateStyleNode(id, textContent);
+};
+
+const updateRubyColorStyle = (id, color) => {
+  const textContent = `
+rt.furigana {
+  color: ${color};
 }
 `;
 
@@ -112,24 +122,6 @@ const renderRuby = (container, token) => {
   });
 };
 
-const waitForTimeline = () => new Promise((resolve, reject) => {
-  let interval = null;
-  let timeout = null;
-
-  interval = setInterval(() => {
-    if (document.querySelector('main')) {
-      clearInterval(interval);
-      clearTimeout(timeout);
-      resolve();
-    }
-  }, 500);
-
-  timeout = setTimeout(() => {
-    clearInterval(interval);
-    reject();
-  }, 20000);
-});
-
 const addRuby = (container) => {
   // tweet container can has multiple parts
   // plain text, anchor, hashtags...
@@ -158,10 +150,11 @@ const addRuby = (container) => {
       return;
     }
 
-    if (!isJapanese(textContent)) {
-      // tweet should be wroten in japanese
-      return;
-    }
+    // DISABLED
+    // if (!isJapanese(textContent)) {
+    //   // tweet should be wroten in japanese
+    //   return;
+    // }
 
     miri.debug('Raw:', textContent);
     chrome.runtime.sendMessage({

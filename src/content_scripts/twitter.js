@@ -4,15 +4,15 @@ MIRI_EVENTS
 
 miri,
 addRuby,
-waitForTimeline
 updateRubySizeStyle
+updateRubyColorStyle
 updateNoSelectStyle
 */
 
 const registerMutationHook = () => {
   const MAIN_CONTAINER_SELECTOR = '#react-root';
   const TL_CONTAINER_SELECTOR = 'section>div>div>div';
-  const TWEET_ARTICLE_SELECTOR = 'article div[dir="auto"]';
+  const TWEET_ARTICLE_SELECTOR = 'article div[lang=ja]';
 
   const mainContainer = document.querySelector(MAIN_CONTAINER_SELECTOR);
 
@@ -51,14 +51,10 @@ const registerMutationHook = () => {
   observer.observe(mainContainer, { childList: true, subtree: true });
 };
 
+
 // main
-waitForTimeline()
-  .then(() => {
-    miri.log('timeline loaded.');
-    registerMutationHook();
-  }).catch((e) => {
-    miri.log('timeline load tiemout.');
-  });
+miri.log('initialized.');
+registerMutationHook();
 
 
 // initialized update the font size
@@ -67,18 +63,20 @@ chrome.runtime.sendMessage(
     event: MIRI_EVENTS.INITIALIZED,
   },
   (response) => {
-    const { pct, kanaless } = response;
+    const { pct, kanaless, color } = response;
     updateRubySizeStyle('miri-ruby', pct);
+    updateRubyColorStyle('miri-ruby-color', color);
     updateNoSelectStyle('miri-no-select', kanaless);
   },
 );
-
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const { event, value } = request;
 
   if (event === MIRI_EVENTS.UPDATE_HIRAGANA_SIZE) {
     updateRubySizeStyle('miri-ruby', value);
+  } else if (event === MIRI_EVENTS.UPDATE_HIRAGANA_COLOR) {
+    updateRubyColorStyle('miri-ruby-color', value);
   } else if (event === MIRI_EVENTS.UPDATE_HIRAGANA_NO_SELECT) {
     updateNoSelectStyle('miri-no-select', value);
   }

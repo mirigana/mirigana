@@ -4,8 +4,6 @@
 ruleMonth
 ruleDate
 ruleCounter
-ruleFamousPeople
-ruleProperNoun
 rulePurify
 */
 
@@ -13,8 +11,6 @@ const tokenRules = [
   ruleMonth,
   ruleDate,
   ruleCounter,
-  ruleFamousPeople,
-  ruleProperNoun,
   rulePurify,
 ];
 

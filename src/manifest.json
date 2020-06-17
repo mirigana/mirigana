@@ -1,12 +1,13 @@
 {
   "manifest_version": 2,
   "name": "mirigana",
-  "version": "0.13",
-  "default_locale": "zh_CN",
+  "version": "0.18",
+  "default_locale": "en",
 
   "description": "__MSG_extension_description__",
 
   "icons": {
+    "16": "icons/16.png",
     "48": "icons/48.png",
     "128": "icons/128.png"
   },
@@ -18,8 +19,6 @@
       "background/rules/rule-month.js",
       "background/rules/rule-date.js",
       "background/rules/rule-counter.js",
-      "background/rules/rule-famous-people.js",
-      "background/rules/rule-proper-noun.js",
       "background/rules/rule-purify.js",
       "background/token-rules.js",
       "background/background.js"
