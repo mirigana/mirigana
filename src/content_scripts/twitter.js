@@ -1,9 +1,11 @@
 /* global
 chrome
-MIRI_EVENTS
 
-miri,
-addRuby,
+MIRI_EVENTS
+miri
+saveSetting
+
+addRuby
 updateRubySizeStyle
 updateRubyColorStyle
 updateNoSelectStyle
@@ -67,6 +69,7 @@ chrome.runtime.sendMessage(
     updateRubySizeStyle('miri-ruby', pct);
     updateRubyColorStyle('miri-ruby-color', color);
     updateNoSelectStyle('miri-no-select', kanaless);
+    saveSetting(response);
   },
 );
 
@@ -75,9 +78,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   if (event === MIRI_EVENTS.UPDATE_HIRAGANA_SIZE) {
     updateRubySizeStyle('miri-ruby', value);
+    saveSetting({ pct: value });
   } else if (event === MIRI_EVENTS.UPDATE_HIRAGANA_COLOR) {
     updateRubyColorStyle('miri-ruby-color', value);
+    saveSetting({ color: value });
   } else if (event === MIRI_EVENTS.UPDATE_HIRAGANA_NO_SELECT) {
     updateNoSelectStyle('miri-no-select', value);
+    saveSetting({ kanaless: value });
   }
 });

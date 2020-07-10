@@ -1,8 +1,14 @@
 /* eslint no-unused-vars: 0 */
 /* global
 chrome
+
 MIRI_EVENTS
+
+getSetting
 */
+
+window.__mirigana__ = (window.__mirigana__ || {});
+window.__mirigana__.hiddenRubyContainers = [];
 
 const miri = {
   log: (...args) => {
@@ -11,6 +17,15 @@ const miri = {
   debug: (...args) => {
     // console.debug('[MIRI]', ...args);
   },
+};
+
+
+const isFirefox = () => {
+  return (typeof InstallTrigger !== 'undefined');
+};
+
+const isChrome = () => {
+  return (!!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime));
 };
 
 // const isJapanese = (text) => {
@@ -77,8 +92,6 @@ const renderKana = hirakana => document.createTextNode(hirakana);
 
 const renderKanji = (hirakana, kanji) => {
   const el = document.createElement('ruby');
-  // const kanaStart = getKanaTag('<%');
-  // const kanaEnd = getKanaTag('%>');
   const kanaStart = getKanaTag('(');
   const kanaEnd = getKanaTag(')');
 
@@ -87,6 +100,22 @@ const renderKanji = (hirakana, kanji) => {
 };
 
 const renderRuby = (container, token) => {
+
+  // hidden ruby on contextmenu
+  if (isChrome()) {
+    const tweetContainer = container.parentElement;
+    tweetContainer.addEventListener('contextmenu', () => {
+      if (!getSetting('kanaless')) {
+        return;
+      }
+
+      container.querySelectorAll('.furigana').forEach((rb) => {
+        rb.style.visibility = 'hidden';
+      });
+      window.__mirigana__.hiddenRubyContainers.push(tweetContainer);
+    });
+  }
+
   token.forEach((r) => {
     const { reading, surface_form } = r;
 
@@ -171,3 +200,19 @@ const addRuby = (container) => {
     });
   });
 };
+
+if (isChrome()) {
+  // show all ruby be hidden
+  document.addEventListener('selectionchange', () => {
+    if (document.getSelection().isCollapsed) {
+      // text selection has been cleared
+      window.__mirigana__.hiddenRubyContainers.forEach((c) => {
+        c.querySelectorAll('.furigana').forEach((rb) => {
+          rb.style.visibility = 'visible';
+        });
+      });
+
+      window.__mirigana__.hiddenRubyContainers = [];
+    }
+  });
+}
