@@ -13,22 +13,6 @@ MIRI_EVENTS
 rebulidToken
 */
 
-// button should only available in twitter scope
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {
-    chrome.declarativeContent.onPageChanged.addRules([{
-      conditions: [
-        new chrome.declarativeContent.PageStateMatcher({
-          pageUrl: {
-            hostEquals: 'twitter.com',
-          },
-        }),
-      ],
-      actions: [new chrome.declarativeContent.ShowPageAction()],
-    }]);
-  });
-});
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const { event } = request;
   if (event !== MIRI_EVENTS.INITIALIZED) {
@@ -38,7 +22,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     HIRAGANA_SIZE_PERCENTAGE_KEY,
     HIRAGANA_NO_SELECTION_KEY,
     HIRAGANA_COLOR_KEY,
-  ], (result) => {
+  ], (result = {}) => {
     sendResponse({
       pct: result[HIRAGANA_SIZE_PERCENTAGE_KEY] || HIRAGANA_SIZE_PERCENTAGE_DEFAULT,
       kanaless: result[HIRAGANA_NO_SELECTION_KEY] || HIRAGANA_NO_SELECTION_DEFAULT,
@@ -48,6 +32,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   // indicate async callback
   return true;
+});
+
+// disable page action icon for the site other than twitter.com
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (tab.url.match(/^https:\/\/twitter.com\//)) {
+    chrome.pageAction.show(tabId);
+  } else {
+    chrome.pageAction.hide(tabId);
+  }
 });
 
 kuromoji.builder({ dicPath: 'data/' }).build().then((tokenizer) => {

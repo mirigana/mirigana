@@ -105,7 +105,7 @@ chrome.storage.sync.get([
   HIRAGANA_SIZE_PERCENTAGE_KEY,
   HIRAGANA_NO_SELECTION_KEY,
   HIRAGANA_COLOR_KEY,
-], (result) => {
+], (result = {}) => {
   const pct = result[HIRAGANA_SIZE_PERCENTAGE_KEY] || HIRAGANA_SIZE_PERCENTAGE_DEFAULT;
   prepareKanaSizeRange(pct);
 
@@ -121,4 +121,15 @@ chrome.storage.sync.get([
   fillText('.kana-selection .literal', 'ui_skip_furigana_selection', true);
   fillText('.footer .feedback', 'ui_feedback', true);
   fillText('.footer .version', `ver ${chrome.runtime.getManifest().version}`);
+});
+
+
+// bind a tag
+document.querySelector('.feedback').addEventListener('click', () => {
+  // e.preventDefault();
+  chrome.tabs.create({
+    url: 'https://twitter.com/ctx_mirigana',
+    active: true,
+  });
+  return false;
 });

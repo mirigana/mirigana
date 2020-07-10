@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "mirigana",
-  "version": "0.18",
+  "version": "0.20",
   "default_locale": "en",
 
   "description": "__MSG_extension_description__",
@@ -9,6 +9,7 @@
   "icons": {
     "16": "icons/16.png",
     "48": "icons/48.png",
+    "64": "icons/64.png"
     "128": "icons/128.png"
   },
 
@@ -27,6 +28,12 @@
   },
 
   "page_action": {
+    "default_icon": {
+      "16": "icons/16.png",
+      "48": "icons/48.png",
+      "64": "icons/64.png"
+      "128": "icons/128.png"
+    },
     "default_popup": "components/popup/popup.html"
   },
 
@@ -41,7 +48,6 @@
 
   "permissions": [
     "tabs",
-    "storage",
-    "declarativeContent"
+    "storage"
   ]
 }
