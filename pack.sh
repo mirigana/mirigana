@@ -1,6 +1,13 @@
 #!/bin/bash
 
-zipfile=mirigana-unsigned.zip
+VER=`cat src/manifest.json| jq -r '.version'`
 
-rm $zipfile
-zip -r $zipfile src/ -x "*.DS_Store" -x "__MACOSX"
+ZIP_FILE=mirigana_${VER}_unsigned.zip
+
+if [[ -f $ZIP_FILE ]]; then
+  rm $ZIP_FILE
+fi
+
+zip -r $ZIP_FILE src/ -x "*.DS_Store" -x "__MACOSX"
+
+echo $ZIP_FILE
