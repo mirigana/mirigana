@@ -1,7 +1,7 @@
 # mirigana
 a chrome extension to insert katagana for tweets.
 
-![](screenshot/screen1.png)
+![](screenshot/screen2.png)
 
 ## Install
 
@@ -13,4 +13,14 @@ Chrome Web Store
 
 Firefox Addons
 
-[https://addons.mozilla.org/en-US/firefox/addon/mirigana/]
+[https://addons.mozilla.org/en-US/firefox/addon/mirigana/](https://addons.mozilla.org/en-US/firefox/addon/mirigana/)
+
+
+## Credits
+
+mirigana relies on the following projects:
+
+- **kuromoji.js** *https://github.com/takuyaa/kuromoji.js*
+- **mecab-ipadic** *https://sourceforge.net/projects/mecab/*
+- **mecab-ipadic-NEologd** *https://github.com/neologd/mecab-ipadic-neologd*
+
