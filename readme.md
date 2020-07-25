@@ -3,7 +3,7 @@ a chrome extension to insert katagana for tweets.
 
 ![](screenshot/screen2.png)
 
-## Install
+## Installation
 
 Chrome Web Store
 

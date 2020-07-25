@@ -2,12 +2,31 @@
 
 VER=`cat src/manifest.json| jq -r '.version'`
 
-ZIP_FILE=mirigana_${VER}_unsigned.zip
+CHROME_PKG=mirigana_${VER}_chrome_unsigned.zip
+FIREFOX_PKG=mirigana_${VER}_firefox_unsigned.zip
+ZIP_FILE_PATH=../${CHROME_PKG}
 
-if [[ -f $ZIP_FILE ]]; then
-  rm $ZIP_FILE
+FF_EXTENSION_ID="cde2f82c-3312-444a-b544-c0b8a758cfb6"
+FF_ADDITIONAL_PROPERTY=". + { \"browser_specific_settings\": { \"gecko\": { \"id\": \"{${FF_EXTENSION_ID}}\", \"strict_min_version\": \"70.0\" } } }"
+
+
+# create manifest for firefox
+jq "${FF_ADDITIONAL_PROPERTY}" src/manifest.json > manifest.json
+
+
+if [[ -f $CHROME_PKG ]]; then
+  rm $CHROME_PKG
+fi
+if [[ -f $FIREFOX_PKG ]]; then
+  rm $FIREFOX_PKG
 fi
 
-zip -r $ZIP_FILE src/ -x "*.DS_Store" -x "__MACOSX"
+cd src
+zip -r $ZIP_FILE_PATH * -x "*.DS_Store" -x "__MACOSX"
+cd ..
 
-echo $ZIP_FILE
+cp $CHROME_PKG $FIREFOX_PKG
+zip $FIREFOX_PKG manifest.json
+
+# cleanup
+rm manifest.json
