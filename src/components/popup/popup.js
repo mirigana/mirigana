@@ -48,6 +48,11 @@ function prepareColorSwitcher(initValue) {
   });
 
   switcher.addEventListener('click', (e) => {
+    if (!e.target.className.includes('block')) {
+      // ignore when trigger from the color-switcher
+      return;
+    }
+
     const { color } = e.target.dataset;
 
     // update class

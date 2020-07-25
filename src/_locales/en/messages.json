@@ -8,7 +8,7 @@
     "description": ""
   },
   "ui_skip_furigana_selection": {
-    "message": "Ignore furigana on selecting",
+    "message": "Exclude furigana on selecting",
     "description": ""
   },
   "ui_feedback": {

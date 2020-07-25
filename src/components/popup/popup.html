@@ -27,11 +27,13 @@
       }
 
       .block {
-        width: 20px;
-        height: 20px;
+        box-sizing: border-box;
+        width: 22px;
+        height: 22px;
         cursor: pointer;
         float: left;
         margin: 2px;
+        outline: 1px solid black;
       }
 
       .color-switcher:after {
@@ -41,8 +43,7 @@
       }
 
       .active {
-        outline: 2px solid #F2CA27;
-        outline-offset: -2px;
+        border: 3px solid #F2CA27;
         cursor: default;
       }
 

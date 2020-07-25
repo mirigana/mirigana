@@ -29,6 +29,10 @@ const HIRAGANA_COLORS = [
     key: 'red',
     value: '#E74C3C',
   },
+  {
+    key: 'white',
+    value: '#FFFFFF',
+  },
 ];
 
 const HIRAGANA_SIZE_PERCENTAGE_KEY = 'HIRAGANA_SIZE_PERCENTAGE';
