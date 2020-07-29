@@ -1,5 +1,5 @@
 # mirigana
-a chrome extension to insert katagana for tweets.
+a chrome extension to insert furigana for tweets.
 
 ![](screenshot/screen2.png)
 
