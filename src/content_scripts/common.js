@@ -1,6 +1,8 @@
 /* eslint no-unused-vars: 0 */
 /* global
 chrome
+window
+document
 
 MIRI_EVENTS
 
@@ -19,23 +21,11 @@ const miri = {
   },
 };
 
+const isFirefox = () => (typeof InstallTrigger !== 'undefined');
+const isChrome = () => (!!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime));
 
-const isFirefox = () => {
-  return (typeof InstallTrigger !== 'undefined');
-};
-
-const isChrome = () => {
-  return (!!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime));
-};
-
-// const isJapanese = (text) => {
-//   if (text.includes('，')) {
-//     return false;
-//   }
-
-//   // https://pisuke-code.com/js-check-hira-kana-kanzi/
-//   return /[\u{3000}-\u{301C}\u{3041}-\u{3093}\u{309B}-\u{309E}]/mu.test(text);
-// };
+const getKanaTag = (tag) => `<img alt="${tag}" src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0"></svg>' />`;
+const renderKana = (hirakana) => document.createTextNode(hirakana);
 
 // inject the css file into the head element
 const updateStyleNode = (id, content) => {
@@ -52,43 +42,25 @@ const updateStyleNode = (id, content) => {
 };
 
 const updateRubySizeStyle = (id, pct) => {
-  const textContent = `
+  updateStyleNode(id, `
 rt.furigana {
   font-size: ${pct}%;
-}
-`;
-
-  updateStyleNode(id, textContent);
+}`);
 };
 
 const updateRubyColorStyle = (id, color) => {
-  const textContent = `
+  updateStyleNode(id, `
 rt.furigana {
   color: ${color};
-}
-`;
-
-  updateStyleNode(id, textContent);
+}`);
 };
 
 const updateNoSelectStyle = (id, kanaless) => {
-  const textContent = `
+  updateStyleNode(id, `
 rt.furigana {
   user-select: ${kanaless ? 'none' : 'text'};
-}
-`;
-
-  updateStyleNode(id, textContent);
+}`);
 };
-
-const kanaToHira = (str = '') => str.replace(/[\u30a1-\u30f6]/g, (match) => {
-  const chr = match.charCodeAt(0) - 0x60;
-  return String.fromCharCode(chr);
-});
-
-const getKanaTag = tag => `<img alt="${tag}" src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0"></svg>' />`;
-
-const renderKana = hirakana => document.createTextNode(hirakana);
 
 const renderKanji = (hirakana, kanji) => {
   const el = document.createElement('ruby');
@@ -100,7 +72,6 @@ const renderKanji = (hirakana, kanji) => {
 };
 
 const renderRuby = (container, token) => {
-
   // hidden ruby on contextmenu
   if (isChrome()) {
     const tweetContainer = container.parentElement;
@@ -116,37 +87,73 @@ const renderRuby = (container, token) => {
     });
   }
 
+  const text = container.innerText;
+
+  // smash the token contains both kanji and kana
+  // split it to <kana+kanji+kana> form
+  const smashed = [];
   token.forEach((r) => {
-    const { reading, surface_form } = r;
+    if (!r.r) {
+      smashed.push(r);
+      return;
+    }
 
-    const partialKanjiRegex = /[\u4E00-\u9FFF]/;
-    const allKanjiRegex = /^[\u4E00-\u9FFF]*$/;
+    const asurface = r.s.split('');
+    const areading = r.r.split('');
 
-    if (allKanjiRegex.test(surface_form)) {
-      // all kanji
-      const hira = kanaToHira(reading);
-      container.appendChild(renderKanji(hira, surface_form));
-    } else if (partialKanjiRegex.test(surface_form)) {
-      // partial, remove ending kana
-      const hira = kanaToHira(reading);
+    const ahira = [];
+    const bhira = [];
+    while (asurface[0] === areading[0]) {
+      ahira.push(asurface[0]);
+      asurface.shift();
+      areading.shift();
+    }
 
-      const ahira = hira.split('');
-      const akanji = surface_form.split('');
-      const surfix = [];
-      while (ahira.length && ahira[ahira.length - 1] === akanji[akanji.length - 1]) {
-        surfix.unshift(ahira.pop());
-        akanji.pop();
-      }
+    while (asurface[asurface.length - 1] === areading[areading.length - 1]) {
+      bhira.push(asurface[asurface.length - 1]);
+      asurface.pop();
+      areading.pop();
+    }
 
-      const okanji = akanji.join('');
-      const ohira = ahira.join('');
-      const lhira = surfix.join('');
+    smashed.push({
+      s: asurface.join(''),
+      r: areading.join(''),
+      p: r.p + ahira.length,
+    });
+  });
 
-      container.appendChild(renderKanji(ohira, okanji));
-      container.appendChild(renderKana(lhira));
+  // create blocks from smashed token
+  let pos = 0;
+  const blocks = [];
+  smashed.forEach((r) => {
+    if (r.p !== pos) {
+      blocks.push({
+        s: text.substr(pos, r.p - pos),
+      });
+      pos = r.p;
+    }
+    blocks.push({
+      s: r.s,
+      r: r.r,
+    });
+    pos += r.s.length;
+  });
+
+  if (text.length > pos) {
+    blocks.push({
+      s: text.substr(pos),
+    });
+  }
+
+  // clear the original text
+  container.innerText = '';
+  blocks.forEach((b) => {
+    if (b.r) {
+      // contains kanji
+      container.appendChild(renderKanji(b.r, b.s));
     } else {
-      // kana
-      container.appendChild(renderKana(surface_form));
+      // all kana or unparsed kanji
+      container.appendChild(renderKana(b.s));
     }
   });
 };
@@ -179,12 +186,6 @@ const addRuby = (container) => {
       return;
     }
 
-    // DISABLED
-    // if (!isJapanese(textContent)) {
-    //   // tweet should be wroten in japanese
-    //   return;
-    // }
-
     miri.debug('Raw:', textContent);
     chrome.runtime.sendMessage({
       event: MIRI_EVENTS.REQUEST_TOKEN,
@@ -194,8 +195,11 @@ const addRuby = (container) => {
         miri.log('Error: token response is invalid for', textContent);
       }
 
-      // clear origin text
-      c.innerText = '';
+      if (!response.length) {
+        // token is empty
+        return;
+      }
+
       renderRuby(c, response);
     });
   });

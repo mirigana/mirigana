@@ -95,7 +95,7 @@ const ruleDate = (token) => {
     const replaced = {
       word_id: null,
       word_type: 'KNOWN',
-      word_position: -1,
+      word_position: curr.word_position,
       surface_form: `${curr.surface_form}${next.surface_form}`,
       pos: '名詞',
       pos_detail_1: '一般',

@@ -14,7 +14,5 @@ const tokenRules = [
   rulePurify,
 ];
 
-const rebulidToken = (token) => {
-  const result = tokenRules.reduce((ret, rule) => rule(ret), token);
-  return result;
-};
+const rebulidToken = (token) =>
+  tokenRules.reduce((ret, rule) => rule(ret), token);
