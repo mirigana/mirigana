@@ -1,5 +1,4 @@
 /* global
-chrome
 HIRAGANA_SIZE_PERCENTAGE_KEY
 HIRAGANA_SIZE_PERCENTAGE_DEFAULT
 HIRAGANA_COLOR_KEY
@@ -9,7 +8,6 @@ HIRAGANA_NO_SELECTION_DEFAULT
 MIRI_EVENTS
 HIRAGANA_COLORS
 */
-
 
 function fillText(id, textOrKey, useKey) {
   const ele = document.querySelector(id);
@@ -28,7 +26,7 @@ const broadcast = (event, value) => {
       event,
       value,
     };
-    tabs.forEach(t => chrome.tabs.sendMessage(t.id, msg));
+    tabs.forEach((t) => chrome.tabs.sendMessage(t.id, msg));
   });
 };
 
@@ -105,7 +103,7 @@ function prepareKanaSelection(initValue) {
   });
 }
 
-// load from stroage
+// load from storage
 chrome.storage.sync.get([
   HIRAGANA_SIZE_PERCENTAGE_KEY,
   HIRAGANA_NO_SELECTION_KEY,
@@ -120,14 +118,12 @@ chrome.storage.sync.get([
   const kanaless = result[HIRAGANA_NO_SELECTION_KEY] || HIRAGANA_NO_SELECTION_DEFAULT;
   prepareKanaSelection(kanaless);
 
-
   fillText('.kana-size .literal', 'ui_furigana_size', true);
   fillText('.kana-size .value', pct);
   fillText('.kana-selection .literal', 'ui_skip_furigana_selection', true);
   fillText('.footer .feedback', 'ui_feedback', true);
   fillText('.footer .version', `ver ${chrome.runtime.getManifest().version}`);
 });
-
 
 // bind a tag
 document.querySelector('.feedback').addEventListener('click', () => {

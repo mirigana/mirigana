@@ -1,25 +1,13 @@
 /* eslint no-unused-vars: 0 */
 /* global
-chrome
-window
-document
 
 MIRI_EVENTS
 
 getSetting
 */
 
-window.__mirigana__ = (window.__mirigana__ || {});
-window.__mirigana__.hiddenRubyContainers = [];
-
-const miri = {
-  log: (...args) => {
-    console.log('[MIRI]', ...args);
-  },
-  debug: (...args) => {
-    // console.debug('[MIRI]', ...args);
-  },
-};
+window.__mirigana__ = (window.__mirigana__ || {}); // eslint-disable-line no-underscore-dangle
+window.__mirigana__.hiddenRubyContainers = []; // eslint-disable-line no-underscore-dangle
 
 const isFirefox = () => (typeof InstallTrigger !== 'undefined');
 const isChrome = () => (!!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime));
@@ -155,53 +143,6 @@ const renderRuby = (container, token) => {
       // all kana or unparsed kanji
       container.appendChild(renderKana(b.s));
     }
-  });
-};
-
-const addRuby = (container) => {
-  // tweet container can has multiple parts
-  // plain text, anchor, hashtags...
-  // each parts can only has 1 child element/node
-  // find the plain text and render it with ruby
-
-  [...container.children].forEach((c) => {
-    if (c.childElementCount) {
-      // contaniner should only has text node
-      return;
-    }
-
-    if (c.tagName !== 'SPAN') {
-      // child should has span sub-child
-      return;
-    }
-
-    if (!c.childNodes.length || c.childNodes.nodeType === 3) {
-      // sub-child should has text node(3)
-      return;
-    }
-
-    const { textContent } = c.childNodes[0];
-    if (!textContent.trim().length) {
-      // text content should not empty
-      return;
-    }
-
-    miri.debug('Raw:', textContent);
-    chrome.runtime.sendMessage({
-      event: MIRI_EVENTS.REQUEST_TOKEN,
-      text: textContent,
-    }, (response) => {
-      if (!response) {
-        miri.log('Error: token response is invalid for', textContent);
-      }
-
-      if (!response.length) {
-        // token is empty
-        return;
-      }
-
-      renderRuby(c, response);
-    });
   });
 };
 

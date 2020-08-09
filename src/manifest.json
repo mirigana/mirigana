@@ -22,6 +22,7 @@
       "background/rules/rule-counter.js",
       "background/rules/rule-purify.js",
       "background/token-rules.js",
+      "background/memory-cache.js",
       "background/background.js"
     ],
     "persistent": true
@@ -37,12 +38,17 @@
     "default_popup": "components/popup/popup.html"
   },
 
+  "options_ui": {
+    "page": "components/options/options.html",
+    "open_in_tab": false
+  },
+
   "content_scripts": [{
     "matches": ["https://twitter.com/*"],
     "js": [
       "constants.js",
-      "content_scripts/setting-store.js",
       "content_scripts/common.js",
+      "content_scripts/miri.js",
       "content_scripts/twitter.js"
     ]
   }],

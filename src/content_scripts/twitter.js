@@ -1,15 +1,28 @@
 /* global
-chrome
-
 MIRI_EVENTS
-miri
-saveSetting
+Miri
 
-addRuby
+renderRuby
 updateRubySizeStyle
 updateRubyColorStyle
 updateNoSelectStyle
 */
+
+const onTokenReady = (c, t) => {
+  renderRuby(c, t);
+};
+
+const onUpdateSettings = (settings) => {
+  const { pct, kanaless, color } = settings;
+  updateRubySizeStyle('miri-ruby', pct);
+  updateRubyColorStyle('miri-ruby-color', color);
+  updateNoSelectStyle('miri-no-select', kanaless);
+};
+
+const miri = new Miri({
+  onTokenReady,
+  onUpdateSettings,
+});
 
 const registerMutationHook = () => {
   const MAIN_CONTAINER_SELECTOR = '#react-root';
@@ -30,6 +43,7 @@ const registerMutationHook = () => {
       return;
     }
 
+    const tweetBag = [];
     mutationsList.forEach((mutation) => {
       const { addedNodes } = mutation;
 
@@ -44,46 +58,60 @@ const registerMutationHook = () => {
           return;
         }
 
-        const allContainers = node.querySelectorAll(TWEET_ARTICLE_SELECTOR);
-        allContainers.forEach(addRuby);
+        const articles = node.querySelectorAll(TWEET_ARTICLE_SELECTOR);
+        articles.forEach((article) => {
+          [...article.children].forEach((c) => {
+            if (c.childElementCount) {
+              // contaniner should only has text node
+              return;
+            }
+
+            if (c.tagName !== 'SPAN') {
+              // child should has span sub-child
+              return;
+            }
+
+            if (!c.childNodes.length || c.childNodes.nodeType === 3) {
+              // sub-child should has text node(3)
+              return;
+            }
+
+            const { textContent } = c.childNodes[0];
+            if (!textContent.trim().length) {
+              // text content should not empty
+              return;
+            }
+
+            tweetBag.push({
+              c,
+              tc: textContent,
+            });
+          });
+        });
       });
     });
+
+    miri.addTweets(tweetBag);
   });
 
   observer.observe(mainContainer, { childList: true, subtree: true });
 };
 
-
 // main
 miri.log('initialized.');
 registerMutationHook();
-
-
-// initialized update the font size
-chrome.runtime.sendMessage(
-  {
-    event: MIRI_EVENTS.INITIALIZED,
-  },
-  (response) => {
-    const { pct, kanaless, color } = response;
-    updateRubySizeStyle('miri-ruby', pct);
-    updateRubyColorStyle('miri-ruby-color', color);
-    updateNoSelectStyle('miri-no-select', kanaless);
-    saveSetting(response);
-  },
-);
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const { event, value } = request;
 
   if (event === MIRI_EVENTS.UPDATE_HIRAGANA_SIZE) {
     updateRubySizeStyle('miri-ruby', value);
-    saveSetting({ pct: value });
+    miri.setSetting({ pct: value });
   } else if (event === MIRI_EVENTS.UPDATE_HIRAGANA_COLOR) {
     updateRubyColorStyle('miri-ruby-color', value);
-    saveSetting({ color: value });
+    miri.setSetting({ color: value });
   } else if (event === MIRI_EVENTS.UPDATE_HIRAGANA_NO_SELECT) {
     updateNoSelectStyle('miri-no-select', value);
-    saveSetting({ kanaless: value });
+    miri.setSetting({ kanaless: value });
   }
 });
