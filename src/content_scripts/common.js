@@ -3,7 +3,7 @@
 
 MIRI_EVENTS
 
-getSetting
+SettingStorage
 */
 
 window.__mirigana__ = (window.__mirigana__ || {}); // eslint-disable-line no-underscore-dangle
@@ -64,7 +64,7 @@ const renderRuby = (container, token) => {
   if (isChrome()) {
     const tweetContainer = container.parentElement;
     tweetContainer.addEventListener('contextmenu', () => {
-      if (!getSetting('kanaless')) {
+      if (!SettingStorage.get('kanaless')) {
         return;
       }
 

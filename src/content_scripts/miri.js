@@ -1,36 +1,32 @@
-/* eslint no-unused-vars: 0 */
 /* global
 
 MIRI_EVENTS
 
+log
+debug
+SettingStorage
 */
 
 /* eslint class-methods-use-this: ["error", { "exceptMethods": ["log"] }] */
+// eslint-disable-next-line no-unused-vars
 class Miri {
   constructor(options) {
     const {
       throttleTimeout,
       onTokenReady,
-      onUpdateSettings,
     } = options;
 
-    this.settingsLoaded = false;
-    this.extensionInfoLoaded = false;
-
-    this.settings = {};
     this.tweetPool = [];
     this.throttleTimeout = throttleTimeout || 3000;
 
     this.onTokenReady = onTokenReady;
-    this.onUpdateSettings = onUpdateSettings;
     this.lastRequestTokens = new Date().getTime() - this.throttleTimeout;
 
-    this.loadExtensionInfo();
-    this.loadSettings();
+    SettingStorage.on('loaded', () => this.requestTokensThrottle());
   }
 
   requestTokensThrottle() {
-    this.debug('requestTokensThrottle() triggered');
+    debug('requestTokensThrottle() triggered');
 
     const now = new Date().getTime();
     const shouldRequest = this.tweetPool.length
@@ -40,7 +36,7 @@ class Miri {
       return;
     }
 
-    this.debug('requestTokensThrottle() approved', this.tweetPool);
+    debug('requestTokensThrottle() approved', this.tweetPool);
     this.lastRequestTokens = now;
 
     const tweets = this.tweetPool.map((tb) => tb.tc);
@@ -51,7 +47,7 @@ class Miri {
       event: MIRI_EVENTS.REQUEST_TOKEN,
       tweets,
     }, (response) => {
-      this.debug('token responsed');
+      debug('token responsed');
       if (!response) {
         this.log('Error: tokens response is invalid.');
         return;
@@ -64,7 +60,7 @@ class Miri {
 
       response.forEach((t, i) => {
         if (!this.onTokenReady) {
-          this.debug('onTokenReady is not defined.');
+          debug('onTokenReady is not defined.');
           return;
         }
 
@@ -82,65 +78,5 @@ class Miri {
     });
 
     this.requestTokensThrottle();
-  }
-
-  loadExtensionInfo() {
-    chrome.runtime.sendMessage(
-      { event: MIRI_EVENTS.LOAD_EXTENSION_INFO },
-      ({ info }) => {
-        this.debug('responsed: LOAD_EXTENSION_INFO');
-        // miri.setReady(info);
-        this.extensionInfoLoaded = true;
-        if (info.installType === 'development') {
-          this.isDevelopment = true;
-        }
-
-        this.checkReady();
-      },
-    );
-  }
-
-  loadSettings() {
-    chrome.runtime.sendMessage(
-      {
-        event: MIRI_EVENTS.LOAD_SETTINGS,
-      },
-      (response) => {
-        this.debug('responsed: LOAD_SETTINGS');
-        this.settingsLoaded = true;
-        const { pct, kanaless, color } = response;
-        this.settings = response;
-
-        this.checkReady();
-      },
-    );
-  }
-
-  checkReady() {
-    if (!this.extensionInfoLoaded || !this.settingsLoaded) {
-      return;
-    }
-
-    this.onUpdateSettings(this.settings);
-    this.requestTokensThrottle();
-  }
-
-  getSetting(key) {
-    return this.settings[key];
-  }
-
-  setSetting(setting) {
-    Object.assign(this.settings, setting);
-  }
-
-  log(...args) {
-    console.log('[MIRI]', ...args);
-  }
-
-  // esint-disable class-methods-use-this
-  debug(...args) {
-    if (this.isDevelopment && false) {
-      console.log('[MIRI]', ...args);
-    }
   }
 }

@@ -1,6 +1,10 @@
 /* global
 MIRI_EVENTS
+
 Miri
+SettingStorage
+log
+debug
 
 renderRuby
 updateRubySizeStyle
@@ -12,16 +16,15 @@ const onTokenReady = (c, t) => {
   renderRuby(c, t);
 };
 
-const onUpdateSettings = (settings) => {
+SettingStorage.on('updated', (settings) => {
   const { pct, kanaless, color } = settings;
   updateRubySizeStyle('miri-ruby', pct);
   updateRubyColorStyle('miri-ruby-color', color);
   updateNoSelectStyle('miri-no-select', kanaless);
-};
+});
 
 const miri = new Miri({
   onTokenReady,
-  onUpdateSettings,
 });
 
 const registerMutationHook = () => {
@@ -32,7 +35,7 @@ const registerMutationHook = () => {
   const mainContainer = document.querySelector(MAIN_CONTAINER_SELECTOR);
 
   if (!mainContainer) {
-    miri.log('not found main container element.');
+    log('not found main container element.');
     return;
   }
 
@@ -98,7 +101,7 @@ const registerMutationHook = () => {
 };
 
 // main
-miri.log('initialized.');
+log('initialized.');
 registerMutationHook();
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -106,12 +109,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   if (event === MIRI_EVENTS.UPDATE_HIRAGANA_SIZE) {
     updateRubySizeStyle('miri-ruby', value);
-    miri.setSetting({ pct: value });
+    SettingStorage.set({ pct: value });
   } else if (event === MIRI_EVENTS.UPDATE_HIRAGANA_COLOR) {
     updateRubyColorStyle('miri-ruby-color', value);
-    miri.setSetting({ color: value });
+    SettingStorage.set({ color: value });
   } else if (event === MIRI_EVENTS.UPDATE_HIRAGANA_NO_SELECT) {
     updateNoSelectStyle('miri-no-select', value);
-    miri.setSetting({ kanaless: value });
+    SettingStorage.set({ kanaless: value });
   }
 });
