@@ -85,6 +85,14 @@ const registerMutationHook = () => {
               return;
             }
 
+            // Twitter bug 2020-08-17 ?
+            // sometimes twitter will update same element twice with unknown rease
+            // unique the result to prevent appending duplicate ruby
+            const duplicated = tweetBag.some((t) => t.c === c && t.tc === textContent);
+            if (duplicated) {
+              return;
+            }
+
             tweetBag.push({
               c,
               tc: textContent,
@@ -94,7 +102,9 @@ const registerMutationHook = () => {
       });
     });
 
-    miri.addTweets(tweetBag);
+    if (tweetBag.length) {
+      miri.addTweets(tweetBag);
+    }
   });
 
   observer.observe(mainContainer, { childList: true, subtree: true });
