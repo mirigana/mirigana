@@ -17,7 +17,8 @@ class Miri {
     } = options;
 
     this.tweetPool = [];
-    this.throttleTimeout = throttleTimeout || 3000;
+    this.throttleTimeout = throttleTimeout || 3500;
+    this.throttleTimer = null;
 
     this.onTokenReady = onTokenReady;
     this.lastRequestTokens = new Date().getTime() - this.throttleTimeout;
@@ -25,14 +26,33 @@ class Miri {
     SettingStorage.on('loaded', () => this.requestTokensThrottle());
   }
 
+  // TODO rewrite this method with setTimeout
+  // const timer = setTimeout(() => ..., this.throttleTimeout)
+  // if timer exists ignore
+  // if time is null schedule another setTimeout()
+  //
+  // TODO add new feature
+  // fast cache render
+  // ignore the throttle time, request from the cache
+  // if hit the result in the cache render the ruby
+  // otherwise wait for the throttle timeout
   requestTokensThrottle() {
     debug('requestTokensThrottle() triggered');
 
+    // clear last scheduled throttle task
+    clearTimeout(this.throttleTimer);
+
     const now = new Date().getTime();
+    const elapsed = now - this.lastRequestTokens;
     const shouldRequest = this.tweetPool.length
-      && ((now - this.lastRequestTokens) > this.throttleTimeout);
+      && (elapsed > this.throttleTimeout);
+
+    console.log('now:', now, 'last:', this.lastRequestTokens, 'elapsed:', elapsed, 'shouldRequest:', shouldRequest);
 
     if (!shouldRequest) {
+      // scheduled a task
+      const waitUntilTime = (this.throttleTimeout - elapsed);
+      this.throttleTimer = setTimeout(() => this.requestTokensThrottle(), waitUntilTime);
       return;
     }
 
