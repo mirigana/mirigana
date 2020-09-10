@@ -12,13 +12,11 @@ const MIRI_EVENTS = {
 const PARSE_ENGINES = [
   {
     key: 'LOCAL_KUROMOJI',
-    title: 'Builtin API',
-    description: 'Fast, parse locally. Huge amount of memory required(~140MB).',
+    i18nKey: 'ui_engine_builtin',
   },
   {
     key: 'MIRIGANA_ONLINE',
-    title: 'Mrigana Online API',
-    description: 'Parse remotely, less memory usage. Most accurate.',
+    i18nKey: 'ui_engine_online',
   },
 ];
 

@@ -9,20 +9,27 @@ const optionsState = {
   engineKeyOrigin: CURRENT_PARSE_ENGINE_DEFAULT,
 };
 
-const applyBtn = document.querySelector('.apply');
+function localizeElement(ele) {
+  const key = ele.innerText.replace(/^__MSG_/, '');
+  ele.innerText = chrome.i18n.getMessage(key);
+}
 
-applyBtn.addEventListener('click', () => {
+const mainContainer = document.querySelector('.main-container');
+const optionContainer = mainContainer.querySelector('.option');
+const optionLabel = mainContainer.querySelector('.label');
+const optionNotice = mainContainer.querySelector('.notice');
+const optionApplyBtn = mainContainer.querySelector('.apply');
+localizeElement(optionLabel);
+localizeElement(optionNotice);
+localizeElement(optionApplyBtn);
+
+optionApplyBtn.addEventListener('click', () => {
   chrome.storage.local.set({
     [CURRENT_PARSE_ENGINE_KEY]: optionsState[CURRENT_PARSE_ENGINE_KEY],
   }, () => {
     chrome.runtime.reload();
     optionsState.engineKeyOrigin = optionsState[CURRENT_PARSE_ENGINE_KEY];
-    applyBtn.setAttribute('disabled', 'disabled');
-
-    // if (window.location.href.includes('?options=')) {
-    //   window.location.href = window.location.href.replace('?/options=', '');
-    // }
-
+    optionApplyBtn.setAttribute('disabled', 'disabled');
     window.close();
   });
 });
@@ -63,8 +70,6 @@ function span(options, ...children) {
 }
 
 function composeEngineOption(currentEngine) {
-  const container = document.querySelector('.main-container .option');
-
   PARSE_ENGINES.forEach((engine) => {
     const activeClassName = (engine.key === currentEngine)
       ? 'active'
@@ -78,25 +83,28 @@ function composeEngineOption(currentEngine) {
 
         if (optionsState.engineKeyOrigin !== engine.key) {
           optionsState[CURRENT_PARSE_ENGINE_KEY] = engine.key;
-          applyBtn.removeAttribute('disabled');
+          optionApplyBtn.removeAttribute('disabled');
         } else {
-          applyBtn.setAttribute('disabled', 'disabled');
+          optionApplyBtn.setAttribute('disabled', 'disabled');
         }
 
         this.classList.add('active');
       },
     };
 
+    const title = chrome.i18n.getMessage(`${engine.i18nKey}_title`);
+    const description = chrome.i18n.getMessage(`${engine.i18nKey}_description`);
+
     const optionBlock = div(blockOptions,
       div('block-selector',
         div('wrap',
           div('title',
-            text(engine.title),
+            text(title),
             span('check-mark', text('✓'))),
           div('description',
-            text(engine.description)))));
+            text(description)))));
 
-    container.appendChild(optionBlock);
+    optionContainer.appendChild(optionBlock);
   });
 }
 

@@ -18,10 +18,10 @@
   "dependencies": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/larvata/mirigana.git"
+    "url": "git+https://github.com/mirigana/mirigana.git"
   },
   "bugs": {
-    "url": "https://github.com/larvata/mirigana/issues"
+    "url": "https://github.com/mirigana/mirigana/issues"
   },
-  "homepage": "https://github.com/larvata/mirigana#readme"
+  "homepage": "https://github.com/mirigana/mirigana#readme"
 }

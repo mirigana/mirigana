@@ -47,7 +47,7 @@ class Miri {
     const shouldRequest = this.tweetPool.length
       && (elapsed > this.throttleTimeout);
 
-    console.log('now:', now, 'last:', this.lastRequestTokens, 'elapsed:', elapsed, 'shouldRequest:', shouldRequest);
+    debug('now:', now, 'last:', this.lastRequestTokens, 'elapsed:', elapsed, 'shouldRequest:', shouldRequest);
 
     if (!shouldRequest) {
       // scheduled a task

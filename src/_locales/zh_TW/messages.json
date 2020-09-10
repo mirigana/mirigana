@@ -3,6 +3,12 @@
     "message": "為日文推(twitter.com)添加假名標注",
     "description": ""
   },
+
+  "ui_btn_apply": {
+    "message": "應用",
+    "description": ""
+  },
+
   "ui_furigana_size": {
     "message": "假名字体设置:",
     "description": ""
@@ -13,6 +19,32 @@
   },
   "ui_feedback": {
     "message": "問題反饋",
+    "description": ""
+  },
+
+  "ui_engine_label": {
+    "message": "語法解析引擎:",
+    "description": ""
+  },
+  "ui_engine_note": {
+    "message": "* 切換引擎後請刷新推特頁面",
+    "description": ""
+  },
+
+  "ui_engine_builtin_title": {
+    "message": "内置",
+    "description": ""
+  },
+  "ui_engine_builtin_description": {
+    "message": "快速, 更多的內存佔用(~140MB).",
+    "description": ""
+  },
+  "ui_engine_online_title": {
+    "message": "遠程解析",
+    "description": ""
+  },
+  "ui_engine_online_description": {
+    "message": "精確, 內存佔用小, 略微延遲",
     "description": ""
   }
 }

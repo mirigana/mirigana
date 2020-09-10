@@ -56,7 +56,7 @@ chrome.storage.local.get((result = {}) => {
         return;
       }
 
-      fetch('https://mirigana.app/api/nlp', {
+      fetch('https://api.mirigana.app/nlp', {
         method: 'post',
         headers: {
           'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ chrome.storage.local.get((result = {}) => {
       }).then((res) => res.json())
         .then((tokens) => {
           // compose the complete token array
-          const result = cacheArray.map((ca, idx) => {
+          const results = cacheArray.map((ca, idx) => {
             if (ca !== undefined) {
               return ca;
             }
@@ -78,8 +78,8 @@ chrome.storage.local.get((result = {}) => {
             return (v);
           });
 
-          // console.log('completed:', result);
-          sendResponse(result);
+          // console.log('completed:', results);
+          sendResponse(results);
         })
         .catch((error) => {
           sendResponse(null);
