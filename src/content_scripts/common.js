@@ -161,3 +161,10 @@ if (isChrome()) {
     }
   });
 }
+
+if (isFirefox()) {
+  updateStyleNode('miri-ruby-align', `
+ruby {
+  ruby-align: space-between;
+}`);
+}

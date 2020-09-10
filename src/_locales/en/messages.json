@@ -27,7 +27,7 @@
     "description": ""
   },
   "ui_engine_note": {
-    "message": "* Please reload the twitter page after you switched engine.",
+    "message": "* Please reload the twitter page after you switched the engine.",
     "description": ""
   },
 
@@ -36,7 +36,7 @@
     "description": ""
   },
   "ui_engine_builtin_description": {
-    "message": "Fast, parse locally. Large amount of memory required(~140MB).",
+    "message": "Fast, parsing locally. Large amount of memory required(~140MB).",
     "description": ""
   },
   "ui_engine_online_title": {
@@ -44,7 +44,7 @@
     "description": ""
   },
   "ui_engine_online_description": {
-    "message": "Parse remotely, less memory usage. Most accurate.",
+    "message": "Parsing remotely, less memory usage. Most accurate.",
     "description": ""
   }
 }
