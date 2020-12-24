@@ -1,12 +1,16 @@
 /* global
+KUROMOJI_DICT_KEYS
+
 PARSE_ENGINES
 CURRENT_PARSE_ENGINE_KEY
-CURRENT_PARSE_ENGINE_DEFAULT
+PARSE_ENGINE_KEYS
 */
 
 const optionsState = {
-  [CURRENT_PARSE_ENGINE_KEY]: CURRENT_PARSE_ENGINE_DEFAULT,
-  engineKeyOrigin: CURRENT_PARSE_ENGINE_DEFAULT,
+  lastEngine: PARSE_ENGINE_KEYS.MIRIGANA_ONLINE,
+  currentEngine: PARSE_ENGINE_KEYS.MIRIGANA_ONLINE,
+  dict: {},
+  builtinReady: true,
 };
 
 function localizeElement(ele) {
@@ -25,12 +29,18 @@ localizeElement(optionApplyBtn);
 
 optionApplyBtn.addEventListener('click', () => {
   chrome.storage.local.set({
-    [CURRENT_PARSE_ENGINE_KEY]: optionsState[CURRENT_PARSE_ENGINE_KEY],
+    [CURRENT_PARSE_ENGINE_KEY]: optionsState.currentEngine,
   }, () => {
     chrome.runtime.reload();
-    optionsState.engineKeyOrigin = optionsState[CURRENT_PARSE_ENGINE_KEY];
+
+    optionsState.engineKeyOrigin = optionsState.currentEngine;
     optionApplyBtn.setAttribute('disabled', 'disabled');
-    window.close();
+
+    // if (window.location.href.includes('?options=')) {
+    //   window.location.href = window.location.href.replace('?/options=', '');
+    // }
+
+    // window.close();
   });
 });
 
@@ -69,57 +79,169 @@ function span(options, ...children) {
   return createDOM('span', options, ...children);
 }
 
-function composeEngineOption(currentEngine) {
-  PARSE_ENGINES.forEach((engine) => {
-    const activeClassName = (engine.key === currentEngine)
-      ? 'active'
-      : '';
+function button(options, buttonText) {
+  return createDOM('button', options, text(buttonText));
+}
 
-    const blockOptions = {
-      className: `block ${activeClassName}`,
-      onClick() {
-        const allBlocks = document.querySelectorAll('.block');
-        allBlocks.forEach((ele) => ele.classList.remove('active'));
-
-        if (optionsState.engineKeyOrigin !== engine.key) {
-          optionsState[CURRENT_PARSE_ENGINE_KEY] = engine.key;
-          optionApplyBtn.removeAttribute('disabled');
-        } else {
-          optionApplyBtn.setAttribute('disabled', 'disabled');
-        }
-
-        this.classList.add('active');
-      },
-    };
-
-    const title = chrome.i18n.getMessage(`${engine.i18nKey}_title`);
-    const description = chrome.i18n.getMessage(`${engine.i18nKey}_description`);
-
-    const optionBlock = div(blockOptions,
-      div('block-selector',
-        div('wrap',
-          div('title',
-            text(title),
-            span('check-mark', text('✓'))),
-          div('description',
-            text(description)))));
-
-    optionContainer.appendChild(optionBlock);
+function getLocalStoragePromise(requestKeys) {
+  return new Promise((resolve, reject) => {
+    const args = [(result) => resolve(result)];
+    if (requestKeys === undefined) {
+      args.unshift(requestKeys);
+    }
+    chrome.storage.local.get.call(chrome.storage.local, ...args);
   });
 }
 
-chrome.storage.local.get((result = {}) => {
-  let currentEngine = result[CURRENT_PARSE_ENGINE_KEY];
-
-  if (!currentEngine) {
-    // write the default value immedately
-    currentEngine = optionsState[CURRENT_PARSE_ENGINE_KEY];
-    chrome.storage.local.set({
-      [CURRENT_PARSE_ENGINE_KEY]: currentEngine,
+function getBuiltinDictAssetsPromise() {
+  return getLocalStoragePromise(KUROMOJI_DICT_KEYS)
+    .then((result) => {
+      const assets = [];
+      KUROMOJI_DICT_KEYS.forEach((k) => {
+        assets.push({
+          id: k,
+          data: result[k],
+        });
+      });
+      return assets;
     });
+}
+
+function renderOption(optionMetadata) {
+  const activeClassName = (optionMetadata.key === optionsState.currentEngine)
+    ? 'active'
+    : '';
+
+  const blockOptions = {
+    className: `block ${activeClassName} ${optionMetadata.disabled}`,
+    onClick(e) {
+      if (e.target.classList.contains('disabled')) {
+        // ignore events from disabled element
+        return;
+      }
+
+      console.log('active')
+      const allBlocks = document.querySelectorAll('.block');
+      allBlocks.forEach((ele) => ele.classList.remove('active'));
+
+      if (optionsState.engineKeyOrigin !== optionMetadata.key) {
+        optionsState.currentEngine = optionMetadata.key;
+        optionApplyBtn.removeAttribute('disabled');
+      } else {
+        optionApplyBtn.setAttribute('disabled', 'disabled');
+      }
+
+      this.classList.add('active');
+    },
+  };
+
+  const title = chrome.i18n.getMessage(`${optionMetadata.i18nKey}_title`);
+  const description = chrome.i18n.getMessage(`${optionMetadata.i18nKey}_description`);
+
+  const optionBlock = div(blockOptions,
+    div('block-selector',
+      div('wrap',
+        div('title',
+          text(title),
+          span('check-mark', text('✓'))),
+        div('description',
+          text(description)))));
+
+  // optionContainer.appendChild(optionBlock);
+  return optionBlock;
+}
+
+
+function downloadToArrayBuffer(url) {
+  console.log('begin:', url)
+  return fetch(url).then((res) => res.arrayBuffer()).then(() => {
+    console.log('downloaded:', url);
+  }).catch(e => console.log(e));
+}
+
+function downloadBuiltinAssets() {
+  return getBuiltinDictAssetsPromise().then((assets) => {
+    console.log(assets)
+    // download missing assets
+    // https://static.mirigana.app/base.dat
+    const url = `https://static.mirigana.app/${assets[0].id}`;
+    return downloadToArrayBuffer(url);
+  });
+
+}
+
+function composeEngineOptions() {
+  const [
+    onlineMetadata,
+    builtinMetadata,
+  ] = PARSE_ENGINES;
+
+  // engine button disabled class
+  builtinMetadata.disabled = optionsState.builtinReady
+    ? ''
+    : 'disabled';
+
+  // render online api block
+  const onlineBlock = renderOption(onlineMetadata);
+  const builtinBlock = renderOption(builtinMetadata);
+
+  optionContainer.innerHTML = '';
+  optionContainer.appendChild(onlineBlock);
+  optionContainer.appendChild(builtinBlock);
+
+  if (optionsState.builtinReady) {
+    return;
   }
 
-  optionsState[CURRENT_PARSE_ENGINE_KEY] = currentEngine;
+  // render assets download button if builtin data is not ready
+  builtinBlock.appendChild(div('block-overlay wrapper'));
+  builtinBlock.appendChild(
+    button({
+      className: 'block-overlay button',
+      onClick: (e) => {
+        console.log('clicked')
+        e.stopPropagation();
+
+        // TODO download file and save to local storage
+        downloadBuiltinAssets().then(() => {
+          // mockup: download done
+          optionsState.builtinReady = true;
+          composeEngineOptions();
+        });
+        // (() => {
+        //   // mockup: download done
+        //   optionsState.builtinReady = true;
+        //   composeEngineOptions();
+        // })();
+      },
+    }, 'Download Database to Using the Builtin Engine'),
+  );
+}
+
+
+
+async function init() {
+  console.log('options page init')
+  const assets = await getBuiltinDictAssetsPromise();
+  const builtinReady = assets.every((a) => a.data);
+
+  const options = await getLocalStoragePromise([CURRENT_PARSE_ENGINE_KEY]);
+  let currentEngine = options[CURRENT_PARSE_ENGINE_KEY] || optionsState.currentEngine;
+  let shouldResetCurrentEngine = false;
+  if (currentEngine === PARSE_ENGINE_KEYS.LOCAL_KUROMOJI
+    && !builtinReady) {
+    // use the default value if the builtin engine is not ready
+    shouldResetCurrentEngine = true;
+  }
+
+  if (shouldResetCurrentEngine) {
+    currentEngine = optionsState.currentEngine;
+  }
+
+  optionsState.currentEngine = currentEngine;
   optionsState.engineKeyOrigin = currentEngine;
-  composeEngineOption(currentEngine);
-});
+  optionsState.builtinReady = builtinReady;
+  composeEngineOptions();
+}
+
+init();

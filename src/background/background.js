@@ -1,5 +1,6 @@
 /* global
-kuromoji
+__kuromoji
+
 HIRAGANA_SIZE_PERCENTAGE_KEY
 HIRAGANA_SIZE_PERCENTAGE_DEFAULT
 HIRAGANA_COLOR_KEY
@@ -16,6 +17,15 @@ rebulidToken
 retrieveFromCache
 persiseToCache
 */
+
+const {
+  TokenizerBuilder,
+  DictionaryBuilder,
+
+  NodeDictionaryLoader,
+  BrowserDictionaryLoader,
+  DictionaryLoaderBase,
+} = __kuromoji;
 
 function listenTokenParseMessage(callback) {
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -34,7 +44,10 @@ chrome.storage.local.get((result = {}) => {
   const currentEngineKey = result[CURRENT_PARSE_ENGINE_KEY] || CURRENT_PARSE_ENGINE_DEFAULT;
   if (currentEngineKey === PARSE_ENGINES[0].key) {
     // local
-    kuromoji.builder({ dicPath: 'data/' }).build().then((tokenizer) => {
+    // TODO storageDictionaryLoader
+    const loader = new NodeDictionaryLoader('data/');
+    const kuromoji = new TokenizerBuilder({ loader });
+    kuromoji.build().then((tokenizer) => {
       listenTokenParseMessage((tweets, sendResponse) => {
         const results = tweets.map((t) => {
           const token = tokenizer.tokenize(t);

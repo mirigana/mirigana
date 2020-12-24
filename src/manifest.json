@@ -23,6 +23,7 @@
       "background/rules/rule-purify.js",
       "background/token-rules.js",
       "background/memory-cache.js",
+      "background/web-extension-dictionary-loader.js",
       "background/background.js"
     ],
     "persistent": true
@@ -40,7 +41,7 @@
 
   "options_ui": {
     "page": "components/options/options.html",
-    "open_in_tab": false
+    "open_in_tab": true
   },
 
   "content_scripts": [{
@@ -57,6 +58,7 @@
 
   "permissions": [
     "tabs",
-    "storage"
+    "storage",
+    "unlimitedStorage"
   ]
 }
