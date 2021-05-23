@@ -63,8 +63,36 @@ const renderRuby = (container, token) => {
   // hidden ruby on contextmenu
   if (isChrome()) {
     const tweetContainer = container.parentElement;
-    tweetContainer.addEventListener('contextmenu', () => {
+
+    // method1:
+    // hide furigana on context menu open
+    // tweetContainer.addEventListener('contextmenu', () => {
+    //   if (!SettingStorage.get('kanaless')) {
+    //     return;
+    //   }
+
+    //   container.querySelectorAll('.furigana').forEach((rb) => {
+    //     rb.style.visibility = 'hidden';
+    //   });
+    //   window.__mirigana__.hiddenRubyContainers.push(tweetContainer);
+    // });
+
+
+    // method2:
+    // hide furigana on text being selected
+    document.addEventListener('selectionchange', () => {
       if (!SettingStorage.get('kanaless')) {
+        return;
+      }
+
+      const selection = document.getSelection();
+      if (!selection.isCollapsed) {
+        // not selected any text
+        return;
+      }
+
+      if (!tweetContainer.contains(selection.anchorNode)) {
+        // the selection is not belongs to the container
         return;
       }
 

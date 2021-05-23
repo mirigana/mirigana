@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "mirigana",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "default_locale": "en",
 
   "description": "__MSG_extension_description__",
