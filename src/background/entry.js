@@ -16,6 +16,8 @@ PARSE_ENGINES
 rebulidToken
 retrieveFromCache
 persiseToCache
+
+listenTokenParseMessage,
 */
 
 const {
@@ -25,19 +27,11 @@ const {
   NodeDictionaryLoader,
   BrowserDictionaryLoader,
   DictionaryLoaderBase,
+
+  getLocalStoragePromise,
+  setLocalStoragePromise,
 } = __kuromoji;
 
-function listenTokenParseMessage(callback) {
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    const { event, tweets } = request;
-    if (event !== MIRI_EVENTS.REQUEST_TOKEN) {
-      return false;
-    }
-
-    callback(tweets, sendResponse);
-    return true;
-  });
-}
 
 // init engine
 chrome.storage.local.get((result = {}) => {
@@ -132,6 +126,24 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   });
 
   // indicate async callback
+  return true;
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  const { event } = request;
+  if (event !== MIRI_EVENTS.DOWNLOAD_ASSETS) {
+    // reject other events
+    return false;
+  }
+
+  // TODO download file and save to local storage
+  downloadBuiltinAssets().then(() => {
+    // mockup: download done
+    sendResponse({
+      success: true,
+    });
+  });
+
   return true;
 });
 

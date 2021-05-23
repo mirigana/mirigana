@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "mirigana",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "default_locale": "en",
 
   "description": "__MSG_extension_description__",
@@ -17,14 +17,16 @@
     "scripts": [
       "vendors/kuromoji.js",
       "constants.js",
+      "common.js",
       "background/rules/rule-month.js",
       "background/rules/rule-date.js",
       "background/rules/rule-counter.js",
       "background/rules/rule-purify.js",
       "background/token-rules.js",
       "background/memory-cache.js",
-      "background/web-extension-dictionary-loader.js",
-      "background/background.js"
+      "background/background-utils.js",
+      "background/entry.js",
+      "background/web-extension-dictionary-loader.js"
     ],
     "persistent": true
   },

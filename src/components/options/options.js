@@ -83,29 +83,9 @@ function button(options, buttonText) {
   return createDOM('button', options, text(buttonText));
 }
 
-function getLocalStoragePromise(requestKeys) {
-  return new Promise((resolve, reject) => {
-    const args = [(result) => resolve(result)];
-    if (requestKeys === undefined) {
-      args.unshift(requestKeys);
-    }
-    chrome.storage.local.get.call(chrome.storage.local, ...args);
-  });
-}
 
-function getBuiltinDictAssetsPromise() {
-  return getLocalStoragePromise(KUROMOJI_DICT_KEYS)
-    .then((result) => {
-      const assets = [];
-      KUROMOJI_DICT_KEYS.forEach((k) => {
-        assets.push({
-          id: k,
-          data: result[k],
-        });
-      });
-      return assets;
-    });
-}
+
+
 
 function renderOption(optionMetadata) {
   const activeClassName = (optionMetadata.key === optionsState.currentEngine)
@@ -152,23 +132,8 @@ function renderOption(optionMetadata) {
 }
 
 
-function downloadToArrayBuffer(url) {
-  console.log('begin:', url)
-  return fetch(url).then((res) => res.arrayBuffer()).then(() => {
-    console.log('downloaded:', url);
-  }).catch(e => console.log(e));
-}
 
-function downloadBuiltinAssets() {
-  return getBuiltinDictAssetsPromise().then((assets) => {
-    console.log(assets)
-    // download missing assets
-    // https://static.mirigana.app/base.dat
-    const url = `https://static.mirigana.app/${assets[0].id}`;
-    return downloadToArrayBuffer(url);
-  });
 
-}
 
 function composeEngineOptions() {
   const [
@@ -202,19 +167,17 @@ function composeEngineOptions() {
         console.log('clicked')
         e.stopPropagation();
 
-        // TODO download file and save to local storage
-        downloadBuiltinAssets().then(() => {
+        chrome.runtime.sendMessage({
+          event: MIRI_EVENTS.DOWNLOAD_ASSETS,
+        }, (response) => {
+          console.log('------', response)
+          // TODO download file and save to local storage
           // mockup: download done
           optionsState.builtinReady = true;
           composeEngineOptions();
         });
-        // (() => {
-        //   // mockup: download done
-        //   optionsState.builtinReady = true;
-        //   composeEngineOptions();
-        // })();
       },
-    }, 'Download Database to Using the Builtin Engine'),
+    }, 'Download Database for Using the Builtin Engine'),
   );
 }
 
