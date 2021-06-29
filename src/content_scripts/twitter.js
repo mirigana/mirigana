@@ -116,8 +116,9 @@ registerMutationHook();
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const { event, value } = request;
+  if (event === MIRI_EVENTS.EXTENSION_ENABLED) {
 
-  if (event === MIRI_EVENTS.UPDATE_HIRAGANA_SIZE) {
+  } else if (event === MIRI_EVENTS.UPDATE_HIRAGANA_SIZE) {
     updateRubySizeStyle('miri-ruby', value);
     SettingStorage.set({ pct: value });
   } else if (event === MIRI_EVENTS.UPDATE_HIRAGANA_COLOR) {

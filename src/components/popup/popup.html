@@ -12,10 +12,15 @@
       }
 
       .section {
-        padding: 15px 0 0 0;
+        padding: 0 0 15px 0;
+        /*position: relative;*/
       }
-      .section:first-child {
+      .section:last-child {
         padding: 0;
+      }
+
+      .grid {
+        display: inline-block;
       }
 
       .kana-selection {
@@ -47,32 +52,108 @@
         cursor: default;
       }
 
-      .footer .version {
-        float: right;
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
       }
+
+      .display-block {
+        display: block;
+      }
+
+      .round-toggle-button {
+        cursor: pointer;
+        width: 48px;
+        height: 20px;
+        border-radius: 10px;
+        background: #337ab7;
+        transition: background .3s;
+        position: relative;
+      }
+
+      .round-toggle-button.disabled {
+        background: #9fa6bf;
+      }
+
+      .round-toggle-button:hover {
+        background: #265a88;
+      }
+
+      .round-toggle-button.disabled:hover {
+        background: #6d758d;
+      }
+
+      .round-toggle-button::before {
+        width: 24px;
+        height: 100%;
+        margin: 0 5px;
+        font-family: Inter;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 10px;
+        line-height: 16px;
+        letter-spacing: .4px;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        content: 'ON';
+      }
+
+      .round-toggle-button.disabled::before {
+        float: right;
+        content: 'OFF';
+      }
+
+      .round-toggle-button .button {
+        top: 2px;
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        border-radius: 8px;
+        background: #fff!important;
+        display: inline-block;
+        transition: left .2s,background .2s;
+        left: 30px;
+      }
+
+      .round-toggle-button.disabled .button {
+        left: 2px;
+      }
+
     </style>
   </head>
   <body>
-    <div class="section kana-size">
-      <span class="literal"></span>
-      <span class="value"></span>
-      %
-      <input type="range" min="50" max="85" step="5" style="width: 180px" />
-    </div>
-
-    <div class="section color-switcher">
-    </div>
-
-    <div class="section kana-selection">
-      <label>
-        <input class="value" type="checkbox" />
+    <div class="main">
+      <div class="section kana-size">
         <span class="literal"></span>
-      </label>
-    </div>
+        <span class="value"></span>
+        %
+        <input type="range" min="50" max="85" step="5" style="width: 180px" />
+      </div>
 
-    <div class="section footer">
-      <a class="feedback" href="#"></a>
-      <span class="version"></span>
+      <div class="section color-switcher">
+      </div>
+
+      <div class="section kana-selection">
+        <label>
+          <input class="value" type="checkbox" />
+          <span class="literal"></span>
+        </label>
+      </div>
+
+      <div class="section footer">
+        <div class="grid">
+          <div class="round-toggle-button">
+            <div class="button"></div>
+          </div>
+        </div>
+        <div class="grid">
+          <span class="version display-block"></span>
+          <a class="feedback display-block" href="#"></a>
+        </div>
+      </div>
     </div>
 
     <script src="/constants.js"></script>

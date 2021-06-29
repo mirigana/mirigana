@@ -29,6 +29,14 @@ const updateStyleNode = (id, content) => {
   }
 };
 
+const setRubyVisibility = (id, visible) => {
+  updateStyleNode(id, `
+rt.furigana {
+  ${visible ? '' : 'display: none;'}
+}
+`);
+};
+
 const updateRubySizeStyle = (id, pct) => {
   updateStyleNode(id, `
 rt.furigana {

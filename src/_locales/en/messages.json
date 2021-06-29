@@ -10,11 +10,11 @@
   },
 
   "ui_furigana_size": {
-    "message": "Furigana Style:",
+    "message": "Font Size:",
     "description": ""
   },
   "ui_skip_furigana_selection": {
-    "message": "Exclude furigana on selecting",
+    "message": "Hide furigana on selecting",
     "description": ""
   },
   "ui_feedback": {
@@ -27,7 +27,7 @@
     "description": ""
   },
   "ui_engine_note": {
-    "message": "* Please reload the twitter page after you switched the engine.",
+    "message": "* Please reload twitter page when you switched the engine.",
     "description": ""
   },
 
