@@ -2,9 +2,17 @@
 <html>
   <head>
     <meta charset="UTF-8">
-  </head>
-  <head>
+    <link rel="preload" href="Inter-Bold.woff2" as="font" crossorigin="anonymous">
     <style>
+      @font-face {
+        font-family: 'Inter';
+        font-style:  normal;
+        font-weight: 700;
+        font-display: swap;
+        src: url("Inter-Bold.woff2?v=3.19") format("woff2"),
+             url("Inter-Bold.woff?v=3.19") format("woff");
+      }
+
       body {
         width: 200px;
         font-family: system-ui, sans-serif;
@@ -14,6 +22,9 @@
       .section {
         padding: 0 0 15px 0;
         /*position: relative;*/
+      }
+      .section:first-child {
+        padding: 5px 0 15px 0;
       }
       .section:last-child {
         padding: 0;
@@ -26,7 +37,6 @@
       .kana-selection {
         line-height: 20px;
       }
-
       .kana-selection input {
         vertical-align: middle;
       }
@@ -71,19 +81,9 @@
         transition: background .3s;
         position: relative;
       }
-
-      .round-toggle-button.disabled {
-        background: #9fa6bf;
-      }
-
       .round-toggle-button:hover {
         background: #265a88;
       }
-
-      .round-toggle-button.disabled:hover {
-        background: #6d758d;
-      }
-
       .round-toggle-button::before {
         width: 24px;
         height: 100%;
@@ -100,12 +100,6 @@
         justify-content: center;
         content: 'ON';
       }
-
-      .round-toggle-button.disabled::before {
-        float: right;
-        content: 'OFF';
-      }
-
       .round-toggle-button .button {
         top: 2px;
         position: absolute;
@@ -118,6 +112,16 @@
         left: 30px;
       }
 
+      .round-toggle-button.disabled {
+        background: #9fa6bf;
+      }
+      .round-toggle-button.disabled:hover {
+        background: #6d758d;
+      }
+      .round-toggle-button.disabled::before {
+        float: right;
+        content: 'OFF';
+      }
       .round-toggle-button.disabled .button {
         left: 2px;
       }
@@ -142,6 +146,8 @@
           <span class="literal"></span>
         </label>
       </div>
+
+      <hr />
 
       <div class="section footer">
         <div class="grid">

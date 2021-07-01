@@ -156,7 +156,7 @@ chrome.storage.sync.get([
   fillText('.kana-size .value', pct);
   fillText('.kana-selection .literal', 'ui_skip_furigana_selection', true);
   fillText('.footer .feedback', 'ui_feedback', true);
-  fillText('.footer .version', `ver ${chrome.runtime.getManifest().version}`);
+  fillText('.footer .version', `Ver ${chrome.runtime.getManifest().version}`);
 });
 
 // bind a tag

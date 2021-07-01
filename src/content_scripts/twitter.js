@@ -7,6 +7,7 @@ log
 debug
 
 renderRuby
+setRubyVisibility
 updateRubySizeStyle
 updateRubyColorStyle
 updateNoSelectStyle
@@ -17,7 +18,13 @@ const onTokenReady = (c, t) => {
 };
 
 SettingStorage.on('updated', (settings) => {
-  const { pct, kanaless, color } = settings;
+  const {
+    enabled,
+    pct,
+    kanaless,
+    color
+  } = settings;
+  setRubyVisibility('miri-ruby-visible', enabled);
   updateRubySizeStyle('miri-ruby', pct);
   updateRubyColorStyle('miri-ruby-color', color);
   updateNoSelectStyle('miri-no-select', kanaless);
@@ -116,8 +123,9 @@ registerMutationHook();
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const { event, value } = request;
-  if (event === MIRI_EVENTS.EXTENSION_ENABLED) {
-
+  if (event === MIRI_EVENTS.TOGGLE_EXTENSION) {
+    setRubyVisibility('miri-ruby-visible', value);
+    SettingStorage.set({ enabled: value });
   } else if (event === MIRI_EVENTS.UPDATE_HIRAGANA_SIZE) {
     updateRubySizeStyle('miri-ruby', value);
     SettingStorage.set({ pct: value });
