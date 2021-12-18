@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mirigana Options</title>
+  <style>
+    .main-container {
+      padding: 0 10px;
+    }
+
+    .option {
+      padding: 0 0 10px 0;
+    }
+
+    .label {
+      padding: 0 0 10px 0;
+      font-weight: 400;
+      color: #333;
+      font-size: 1.1em;
+    }
+
+    .block {
+      margin: 0 0 -1px 0;
+      cursor: pointer;
+    }
+
+    .block.active {
+      background-color: #cfe8Fc;
+    }
+
+    .block:hover {
+      color: white;
+      background-color: #04a9f4;
+    }
+
+    .block-selector {
+      padding: 10px 0 10px 15px;
+      border: 1px #04a9f4 solid;
+      height: 55px;
+      display: flex;
+      align-items: center;
+    }
+
+    .title {
+      font-weight: 600;
+      padding: 0 0 4px 0;
+      /*line-height: 1.4em;*/
+    }
+
+    .actions {
+      /*text-align: right;*/
+    }
+
+    .notice {
+      float: left;
+      width: 270px;
+      margin: 0 0 20px 10px;
+      color: darkred;
+    }
+
+    .apply {
+      float: right;
+    }
+
+    button {
+      cursor: pointer;
+      font-size: 12px;
+      border-radius: 4px;
+      padding: 0px 12px;
+      font-weight: 500;
+      flex: none;
+      white-space: nowrap;
+      min-width: 80px;
+      height: 28px;
+      margin: 4px 0;
+      background-color: #1a73e8;
+      border: none;
+      color: #fff;
+    }
+
+    button[disabled=disabled] {
+      cursor: default;
+      background-color: rgb( 189, 193, 198 );
+    }
+
+    button[disabled=disabled]:hover {
+      background-color: rgb( 189, 193, 198 );
+    }
+
+    button:hover {
+      background-color: #3b86e8;
+    }
+
+    .check-mark {
+      color: green;
+      /*font-size: 1.2em;*/
+      display: none;
+      padding: 0 0 0 5px;
+    }
+
+    .active .check-mark {
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <div class="option">
+      <div class="label">__MSG_ui_engine_label</div>
+    </div>
+    <div class="actions">
+      <div class="notice">__MSG_ui_engine_note</div>
+      <button class="apply" disabled="disabled">__MSG_ui_btn_apply</button>
+    </div>
+  </div>
+
+  <script src="/constants.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

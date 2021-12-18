@@ -1,0 +1,50 @@
+{
+  "extension_description": {
+    "message": "Adding furigana to kanji on Twitter",
+    "description": ""
+  },
+
+  "ui_btn_apply": {
+    "message": "Apply",
+    "description": ""
+  },
+
+  "ui_furigana_size": {
+    "message": "Font Size:",
+    "description": ""
+  },
+  "ui_skip_furigana_selection": {
+    "message": "Hide furigana on selecting",
+    "description": ""
+  },
+  "ui_feedback": {
+    "message": "Feedback",
+    "description": ""
+  },
+
+  "ui_engine_label": {
+    "message": "Japanese Parse Engine:",
+    "description": ""
+  },
+  "ui_engine_note": {
+    "message": "* Please reload twitter page when you switched the engine.",
+    "description": ""
+  },
+
+  "ui_engine_builtin_title": {
+    "message": "Builtin API",
+    "description": ""
+  },
+  "ui_engine_builtin_description": {
+    "message": "Fast, parsing locally. Large amount of memory required(~140MB).",
+    "description": ""
+  },
+  "ui_engine_online_title": {
+    "message": "Mrigana Online API",
+    "description": ""
+  },
+  "ui_engine_online_description": {
+    "message": "Parsing remotely, less memory usage. Most accurate.",
+    "description": ""
+  }
+}

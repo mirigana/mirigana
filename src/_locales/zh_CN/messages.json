@@ -1,0 +1,50 @@
+{
+  "extension_description": {
+    "message": "为日文推(twitter.com)添加假名标注",
+    "description": ""
+  },
+
+  "ui_btn_apply": {
+    "message": "应用",
+    "description": ""
+  },
+
+  "ui_furigana_size": {
+    "message": "字体比例:",
+    "description": ""
+  },
+  "ui_skip_furigana_selection": {
+    "message": "框选文字时隐藏标注",
+    "description": ""
+  },
+  "ui_feedback": {
+    "message": "问题反馈",
+    "description": ""
+  },
+
+  "ui_engine_label": {
+    "message": "语法解析引擎:",
+    "description": ""
+  },
+  "ui_engine_note": {
+    "message": "* 切换引擎后请刷新推特页面.",
+    "description": ""
+  },
+
+  "ui_engine_builtin_title": {
+    "message": "内置",
+    "description": ""
+  },
+  "ui_engine_builtin_description": {
+    "message": "快速, 更多的内存占用(~140MB).",
+    "description": ""
+  },
+  "ui_engine_online_title": {
+    "message": "远程解析",
+    "description": ""
+  },
+  "ui_engine_online_description": {
+    "message": "精确, 内存占用小, 略微延迟",
+    "description": ""
+  }
+}

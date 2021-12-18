@@ -1,31 +1,168 @@
 <!DOCTYPE html>
-<html style="width: 165px">
+<html>
   <head>
+    <meta charset="UTF-8">
+    <link rel="preload" href="Inter-Bold.woff2" as="font" crossorigin="anonymous">
     <style>
-      #ver {
-        float: right;
+      @font-face {
+        font-family: 'Inter';
+        font-style:  normal;
+        font-weight: 700;
+        font-display: swap;
+        src: url("Inter-Bold.woff2?v=3.19") format("woff2"),
+             url("Inter-Bold.woff?v=3.19") format("woff");
       }
+
+      body {
+        width: 200px;
+        font-family: system-ui, sans-serif;
+        font-size: 75%;
+      }
+
+      .section {
+        padding: 0 0 15px 0;
+        /*position: relative;*/
+      }
+      .section:first-child {
+        padding: 5px 0 15px 0;
+      }
+      .section:last-child {
+        padding: 0;
+      }
+
+      .grid {
+        display: inline-block;
+      }
+
+      .kana-selection {
+        line-height: 20px;
+      }
+      .kana-selection input {
+        vertical-align: middle;
+      }
+
+      .block {
+        box-sizing: border-box;
+        width: 22px;
+        height: 22px;
+        cursor: pointer;
+        float: left;
+        margin: 2px;
+        outline: 1px solid black;
+      }
+
+      .color-switcher:after {
+        content: '';
+        display: block;
+        clear: both;
+      }
+
+      .active {
+        border: 3px solid #F2CA27;
+        cursor: default;
+      }
+
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+      }
+
+      .display-block {
+        display: block;
+      }
+
+      .round-toggle-button {
+        cursor: pointer;
+        width: 48px;
+        height: 20px;
+        border-radius: 10px;
+        background: #337ab7;
+        transition: background .3s;
+        position: relative;
+      }
+      .round-toggle-button:hover {
+        background: #265a88;
+      }
+      .round-toggle-button::before {
+        width: 24px;
+        height: 100%;
+        margin: 0 5px;
+        font-family: Inter;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 10px;
+        line-height: 16px;
+        letter-spacing: .4px;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        content: 'ON';
+      }
+      .round-toggle-button .button {
+        top: 2px;
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        border-radius: 8px;
+        background: #fff!important;
+        display: inline-block;
+        transition: left .2s,background .2s;
+        left: 30px;
+      }
+
+      .round-toggle-button.disabled {
+        background: #9fa6bf;
+      }
+      .round-toggle-button.disabled:hover {
+        background: #6d758d;
+      }
+      .round-toggle-button.disabled::before {
+        float: right;
+        content: 'OFF';
+      }
+      .round-toggle-button.disabled .button {
+        left: 2px;
+      }
+
     </style>
   </head>
   <body>
-    <div>
-      Hiragana Size: <span id="textPct"></span>%
+    <div class="main">
+      <div class="section kana-size">
+        <span class="literal"></span>
+        <span class="value"></span>
+        %
+        <input type="range" min="50" max="85" step="5" style="width: 180px" />
+      </div>
+
+      <div class="section color-switcher">
+      </div>
+
+      <div class="section kana-selection">
+        <label>
+          <input class="value" type="checkbox" />
+          <span class="literal"></span>
+        </label>
+      </div>
+
+      <hr />
+
+      <div class="section footer">
+        <div class="grid">
+          <div class="round-toggle-button">
+            <div class="button"></div>
+          </div>
+        </div>
+        <div class="grid">
+          <span class="version display-block"></span>
+          <a class="feedback display-block" href="#"></a>
+        </div>
+      </div>
     </div>
-    <input id="size" type="range" min="50" max="85" step="5" style="width: 145px" />
 
-    <div>&nbsp;</div>
-
-    <div>
-      <input id="kana" type="checkbox" /><label for="kana">No selecting furigana</label>
-    </div>
-
-    <div>&nbsp;</div>
-    <div>
-      <a href="https://github.com/larvata/mirigana/issues" target="_blank">feedback</a>
-      <span id="ver"></span>
-    </div>
-
-    <script src="../../constants.js"></script>
+    <script src="/constants.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

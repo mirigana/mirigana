@@ -1,47 +1,62 @@
 {
   "manifest_version": 2,
   "name": "mirigana",
-  "version": "0.9",
-  "description": "Insert furigana for kanji words in Twitter",
+  "version": "1.0.3",
+  "default_locale": "en",
+
+  "description": "__MSG_extension_description__",
 
   "icons": {
-    "48": "icons/48.png",
-    "128": "icons/128.png"
+    "16": "icons/action-icon-16.png",
+    "48": "icons/app-icon-48.png",
+    "64": "icons/app-icon-64.png",
+    "128": "icons/app-icon-128.png"
   },
 
   "background": {
     "scripts": [
-      "lib/kuromoji.js",
+      "vendors/kuromoji.js",
       "constants.js",
       "background/rules/rule-month.js",
       "background/rules/rule-date.js",
       "background/rules/rule-counter.js",
-      "background/rules/rule-famous-people.js",
-      "background/rules/rule-proper-noun.js",
       "background/rules/rule-purify.js",
       "background/token-rules.js",
+      "background/memory-cache.js",
       "background/background.js"
     ],
     "persistent": true
   },
 
   "page_action": {
+    "default_icon": {
+      "16": "icons/action-icon-16.png",
+      "48": "icons/action-icon-48.png",
+      "64": "icons/action-icon-64.png",
+      "128": "icons/action-icon-128.png"
+    },
     "default_popup": "components/popup/popup.html"
+  },
+
+  "options_ui": {
+    "page": "components/options/options.html",
+    "open_in_tab": false
   },
 
   "content_scripts": [{
     "matches": ["https://twitter.com/*"],
     "js": [
       "constants.js",
+      "content_scripts/console.js",
+      "content_scripts/setting-storage.js",
       "content_scripts/common.js",
+      "content_scripts/miri.js",
       "content_scripts/twitter.js"
     ]
   }],
 
   "permissions": [
     "tabs",
-    "storage",
-    "declarativeContent",
-    "https://twitter.com/*"
+    "storage"
   ]
 }

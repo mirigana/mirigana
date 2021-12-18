@@ -1,14 +1,19 @@
 /* eslint no-unused-vars: 0 */
 /* global
-chrome
+
 MIRI_EVENTS
+
+SettingStorage
 */
 
-const miri = {
-  log: (...args) => {
-    console.log('[MIRI]', ...args);
-  },
-};
+window.__mirigana__ = (window.__mirigana__ || {}); // eslint-disable-line no-underscore-dangle
+window.__mirigana__.hiddenRubyContainers = []; // eslint-disable-line no-underscore-dangle
+
+const isFirefox = () => (typeof InstallTrigger !== 'undefined');
+const isChrome = () => (!!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime));
+
+const getKanaTag = (tag) => `<img alt="${tag}" src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0"></svg>' />`;
+const renderKana = (hirakana) => document.createTextNode(hirakana);
 
 // inject the css file into the head element
 const updateStyleNode = (id, content) => {
@@ -24,39 +29,37 @@ const updateStyleNode = (id, content) => {
   }
 };
 
+const setRubyVisibility = (id, visible) => {
+  updateStyleNode(id, `
+rt.furigana {
+  ${visible ? '' : 'display: none;'}
+}
+`);
+};
+
 const updateRubySizeStyle = (id, pct) => {
-  const textContent = `
+  updateStyleNode(id, `
 rt.furigana {
   font-size: ${pct}%;
-}
-`;
+}`);
+};
 
-  updateStyleNode(id, textContent);
+const updateRubyColorStyle = (id, color) => {
+  updateStyleNode(id, `
+rt.furigana {
+  color: ${color};
+}`);
 };
 
 const updateNoSelectStyle = (id, kanaless) => {
-  const textContent = `
+  updateStyleNode(id, `
 rt.furigana {
   user-select: ${kanaless ? 'none' : 'text'};
-}
-`;
-
-  updateStyleNode(id, textContent);
+}`);
 };
-
-const kanaToHira = (str = '') => str.replace(/[\u30a1-\u30f6]/g, (match) => {
-  const chr = match.charCodeAt(0) - 0x60;
-  return String.fromCharCode(chr);
-});
-
-const getKanaTag = tag => `<img alt="${tag}" src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0"></svg>' />`;
-
-const renderKana = hirakana => document.createTextNode(hirakana);
 
 const renderKanji = (hirakana, kanji) => {
   const el = document.createElement('ruby');
-  // const kanaStart = getKanaTag('<%');
-  // const kanaEnd = getKanaTag('%>');
   const kanaStart = getKanaTag('(');
   const kanaEnd = getKanaTag(')');
 
@@ -65,99 +68,139 @@ const renderKanji = (hirakana, kanji) => {
 };
 
 const renderRuby = (container, token) => {
+  // hidden ruby on contextmenu
+  if (isChrome()) {
+    const tweetContainer = container.parentElement;
+
+    // method1:
+    // hide furigana on context menu open
+    // tweetContainer.addEventListener('contextmenu', () => {
+    //   if (!SettingStorage.get('kanaless')) {
+    //     return;
+    //   }
+
+    //   container.querySelectorAll('.furigana').forEach((rb) => {
+    //     rb.style.visibility = 'hidden';
+    //   });
+    //   window.__mirigana__.hiddenRubyContainers.push(tweetContainer);
+    // });
+
+
+    // method2:
+    // hide furigana on text being selected
+    document.addEventListener('selectionchange', () => {
+      if (!SettingStorage.get('kanaless')) {
+        return;
+      }
+
+      const selection = document.getSelection();
+      if (!selection.isCollapsed) {
+        // not selected any text
+        return;
+      }
+
+      if (!tweetContainer.contains(selection.anchorNode)) {
+        // the selection is not belongs to the container
+        return;
+      }
+
+      container.querySelectorAll('.furigana').forEach((rb) => {
+        rb.style.visibility = 'hidden';
+      });
+      window.__mirigana__.hiddenRubyContainers.push(tweetContainer);
+    });
+  }
+
+  const text = container.innerText;
+
+  // smash the token contains both kanji and kana
+  // split it to <kana+kanji+kana> form
+  const smashed = [];
   token.forEach((r) => {
-    const { reading, surface_form } = r;
-
-    const partialKanjiRegex = /[\u4E00-\u9FFF]/;
-    const allKanjiRegex = /^[\u4E00-\u9FFF]*$/;
-
-    if (allKanjiRegex.test(surface_form)) {
-      // all kanji
-      const hira = kanaToHira(reading);
-      container.appendChild(renderKanji(hira, surface_form));
-    } else if (partialKanjiRegex.test(surface_form)) {
-      // partial, remove ending kana
-      const hira = kanaToHira(reading);
-
-      const ahira = hira.split('');
-      const akanji = surface_form.split('');
-      const surfix = [];
-      while (ahira.length && ahira[ahira.length - 1] === akanji[akanji.length - 1]) {
-        surfix.unshift(ahira.pop());
-        akanji.pop();
-      }
-
-      const okanji = akanji.join('');
-      const ohira = ahira.join('');
-      const lhira = surfix.join('');
-
-      container.appendChild(renderKanji(ohira, okanji));
-      container.appendChild(renderKana(lhira));
-    } else {
-      // kana
-      container.appendChild(renderKana(surface_form));
-    }
-  });
-};
-
-const waitForTimeline = () => new Promise((resolve, reject) => {
-  let interval = null;
-  let timeout = null;
-
-  interval = setInterval(() => {
-    if (document.querySelector('main')) {
-      clearInterval(interval);
-      clearTimeout(timeout);
-      resolve();
-    }
-  }, 500);
-
-  timeout = setTimeout(() => {
-    clearInterval(interval);
-    reject();
-  }, 20000);
-});
-
-const addRuby = (container) => {
-  // tweet container can has multiple parts
-  // plain text, anchor, hashtags...
-  // each parts can only has 1 child element/node
-  // find the plain text and render it with ruby
-
-  [...container.children].forEach((c) => {
-    if (c.childElementCount) {
-      // contaniner should only has text node
+    if (!r.r) {
+      smashed.push(r);
       return;
     }
 
-    if (c.tagName !== 'SPAN') {
-      // child should has span sub-child
-      return;
+    const asurface = r.s.split('');
+    const areading = r.r.split('');
+
+    const ahira = [];
+    const bhira = [];
+    while (asurface[0] === areading[0]) {
+      ahira.push(asurface[0]);
+      asurface.shift();
+      areading.shift();
     }
 
-    if (!c.childNodes.length || c.childNodes.nodeType === 3) {
-      // sub-child should has text node(3)
-      return;
+    while (asurface[asurface.length - 1] === areading[areading.length - 1]) {
+      bhira.push(asurface[asurface.length - 1]);
+      asurface.pop();
+      areading.pop();
     }
 
-    const { textContent } = c.childNodes[0];
-    if (!textContent.trim().length) {
-      // text content should not empty
-      return;
-    }
-
-    miri.log('Raw:', textContent);
-    chrome.runtime.sendMessage({
-      event: MIRI_EVENTS.REQUEST_TOKEN,
-      text: textContent,
-    }, (response) => {
-      if (!response) {
-        miri.log('Error: token response is invalid for', textContent);
-      }
-
-      // clear origin text
-      c.innerText = '';
-      renderRuby(c, response);
+    smashed.push({
+      s: asurface.join(''),
+      r: areading.join(''),
+      p: r.p + ahira.length,
     });
   });
+
+  // create blocks from smashed token
+  let pos = 0;
+  const blocks = [];
+  smashed.forEach((r) => {
+    if (r.p !== pos) {
+      blocks.push({
+        s: text.substr(pos, r.p - pos),
+      });
+      pos = r.p;
+    }
+    blocks.push({
+      s: r.s,
+      r: r.r,
+    });
+    pos += r.s.length;
+  });
+
+  if (text.length > pos) {
+    blocks.push({
+      s: text.substr(pos),
+    });
+  }
+
+  // clear the original text
+  container.innerText = '';
+  blocks.forEach((b) => {
+    if (b.r) {
+      // contains kanji
+      container.appendChild(renderKanji(b.r, b.s));
+    } else {
+      // all kana or unparsed kanji
+      container.appendChild(renderKana(b.s));
+    }
+  });
 };
+
+if (isChrome()) {
+  // show all ruby be hidden
+  document.addEventListener('selectionchange', () => {
+    if (document.getSelection().isCollapsed) {
+      // text selection has been cleared
+      window.__mirigana__.hiddenRubyContainers.forEach((c) => {
+        c.querySelectorAll('.furigana').forEach((rb) => {
+          rb.style.visibility = 'visible';
+        });
+      });
+
+      window.__mirigana__.hiddenRubyContainers = [];
+    }
+  });
+}
+
+if (isFirefox()) {
+  updateStyleNode('miri-ruby-align', `
+ruby {
+  ruby-align: space-between;
+}`);
+}

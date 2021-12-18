@@ -1,23 +1,48 @@
 /* global
-chrome
 MIRI_EVENTS
 
-miri,
-addRuby,
-waitForTimeline
+Miri
+SettingStorage
+log
+debug
+
+renderRuby
+setRubyVisibility
 updateRubySizeStyle
+updateRubyColorStyle
 updateNoSelectStyle
 */
 
+const onTokenReady = (c, t) => {
+  renderRuby(c, t);
+};
+
+SettingStorage.on('updated', (settings) => {
+  const {
+    enabled,
+    pct,
+    kanaless,
+    color
+  } = settings;
+  setRubyVisibility('miri-ruby-visible', enabled);
+  updateRubySizeStyle('miri-ruby', pct);
+  updateRubyColorStyle('miri-ruby-color', color);
+  updateNoSelectStyle('miri-no-select', kanaless);
+});
+
+const miri = new Miri({
+  onTokenReady,
+});
+
 const registerMutationHook = () => {
-  const MAIN_CONTAINER_SELECTOR = 'main';
+  const MAIN_CONTAINER_SELECTOR = '#react-root';
   const TL_CONTAINER_SELECTOR = 'section>div>div>div';
   const TWEET_ARTICLE_SELECTOR = 'article div[lang=ja]';
 
   const mainContainer = document.querySelector(MAIN_CONTAINER_SELECTOR);
 
   if (!mainContainer) {
-    miri.log('not found main container element.');
+    log('not found main container element.');
     return;
   }
 
@@ -28,6 +53,7 @@ const registerMutationHook = () => {
       return;
     }
 
+    const tweetBag = [];
     mutationsList.forEach((mutation) => {
       const { addedNodes } = mutation;
 
@@ -42,44 +68,72 @@ const registerMutationHook = () => {
           return;
         }
 
-        const allContainers = node.querySelectorAll(TWEET_ARTICLE_SELECTOR);
-        allContainers.forEach(addRuby);
+        const articles = node.querySelectorAll(TWEET_ARTICLE_SELECTOR);
+        articles.forEach((article) => {
+          [...article.children].forEach((c) => {
+            if (c.childElementCount) {
+              // contaniner should only has text node
+              return;
+            }
+
+            if (c.tagName !== 'SPAN') {
+              // child should has span sub-child
+              return;
+            }
+
+            if (!c.childNodes.length || c.childNodes.nodeType === 3) {
+              // sub-child should has text node(3)
+              return;
+            }
+
+            const { textContent } = c.childNodes[0];
+            if (!textContent.trim().length) {
+              // text content should not empty
+              return;
+            }
+
+            // Twitter bug 2020-08-17 ?
+            // sometimes twitter will update same element twice with unknown rease
+            // unique the result to prevent appending duplicate ruby
+            const duplicated = tweetBag.some((t) => t.c === c && t.tc === textContent);
+            if (duplicated) {
+              return;
+            }
+
+            tweetBag.push({
+              c,
+              tc: textContent,
+            });
+          });
+        });
       });
     });
+
+    if (tweetBag.length) {
+      miri.addTweets(tweetBag);
+    }
   });
 
   observer.observe(mainContainer, { childList: true, subtree: true });
 };
 
 // main
-waitForTimeline()
-  .then(() => {
-    miri.log('timeline loaded.');
-    registerMutationHook();
-  }).catch((e) => {
-    miri.log('timeline load tiemout.');
-  });
-
-
-// initialized update the font size
-chrome.runtime.sendMessage(
-  {
-    event: MIRI_EVENTS.INITIALIZED,
-  },
-  (response) => {
-    const { pct, kanaless } = response;
-    updateRubySizeStyle('miri-ruby', pct);
-    updateNoSelectStyle('miri-no-select', kanaless);
-  },
-);
-
+log('initialized.');
+registerMutationHook();
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const { event, value } = request;
-
-  if (event === MIRI_EVENTS.UPDATE_HIRAGANA_SIZE) {
+  if (event === MIRI_EVENTS.TOGGLE_EXTENSION) {
+    setRubyVisibility('miri-ruby-visible', value);
+    SettingStorage.set({ enabled: value });
+  } else if (event === MIRI_EVENTS.UPDATE_HIRAGANA_SIZE) {
     updateRubySizeStyle('miri-ruby', value);
+    SettingStorage.set({ pct: value });
+  } else if (event === MIRI_EVENTS.UPDATE_HIRAGANA_COLOR) {
+    updateRubyColorStyle('miri-ruby-color', value);
+    SettingStorage.set({ color: value });
   } else if (event === MIRI_EVENTS.UPDATE_HIRAGANA_NO_SELECT) {
     updateNoSelectStyle('miri-no-select', value);
+    SettingStorage.set({ kanaless: value });
   }
 });

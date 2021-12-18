@@ -1,3 +1,6 @@
 node_modules/
 
-src/Archive.zip
+playground/
+legacy/
+images-raw/
+mirigana_*.zip
