@@ -17,6 +17,7 @@
     "scripts": [
       "vendors/kuromoji.js",
       "constants.js",
+      "background/rules/rule-fix.js",
       "background/rules/rule-month.js",
       "background/rules/rule-date.js",
       "background/rules/rule-counter.js",
