@@ -10,11 +10,11 @@
   },
 
   "ui_furigana_size": {
-    "message": "假名字体设置:",
+    "message": "字体比例:",
     "description": ""
   },
   "ui_skip_furigana_selection": {
-    "message": "框选文字时忽略假名",
+    "message": "框选文字时隐藏标注",
     "description": ""
   },
   "ui_feedback": {

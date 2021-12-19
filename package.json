@@ -1,27 +1,25 @@
 {
-  "name": "miri-gana",
-  "version": "1.0.0",
-  "description": "a chrome extension to insert katagana for tweets.",
+  "name": "mirigana",
+  "version": "1.1.0",
+  "description": "a chrome extension to annotate tweets with katagana.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "./pack.sh"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "eslint": "^7.5.0",
-    "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.22.0"
+    "eslint": "^8.5.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.3"
   },
-  "dependencies": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mirigana/mirigana.git"
+    "url": "git+https://github.com/larvata/mirigana.git"
   },
   "bugs": {
-    "url": "https://github.com/mirigana/mirigana/issues"
+    "url": "https://github.com/larvata/mirigana/issues"
   },
-  "homepage": "https://github.com/mirigana/mirigana#readme"
+  "homepage": "https://github.com/larvata/mirigana#readme"
 }

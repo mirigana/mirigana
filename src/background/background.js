@@ -1,5 +1,7 @@
 /* global
 kuromoji
+EXTENSION_ENABLED_KEY
+EXTENSION_ENABLED_DEFAULT
 HIRAGANA_SIZE_PERCENTAGE_KEY
 HIRAGANA_SIZE_PERCENTAGE_DEFAULT
 HIRAGANA_COLOR_KEY
@@ -95,11 +97,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return false;
   }
 
+
+  // TODO this function is duplicated with popup.js
+  function nullish(value, defaultValue) {
+    if (value === null || value === undefined) {
+      return defaultValue;
+    }
+    return value;
+  }
+
   chrome.storage.sync.get((result = {}) => {
     sendResponse({
-      pct: result[HIRAGANA_SIZE_PERCENTAGE_KEY] || HIRAGANA_SIZE_PERCENTAGE_DEFAULT,
-      kanaless: result[HIRAGANA_NO_SELECTION_KEY] || HIRAGANA_NO_SELECTION_DEFAULT,
-      color: result[HIRAGANA_COLOR_KEY] || HIRAGANA_COLOR_DEFAULT,
+      enabled: nullish(result[EXTENSION_ENABLED_KEY], EXTENSION_ENABLED_DEFAULT),
+      pct: nullish(result[HIRAGANA_SIZE_PERCENTAGE_KEY], HIRAGANA_SIZE_PERCENTAGE_DEFAULT),
+      color: nullish(result[HIRAGANA_COLOR_KEY], HIRAGANA_COLOR_DEFAULT),
+      kanaless: nullish(result[HIRAGANA_NO_SELECTION_KEY], HIRAGANA_NO_SELECTION_DEFAULT),
     });
   });
 

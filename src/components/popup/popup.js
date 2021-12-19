@@ -1,4 +1,6 @@
 /* global
+EXTENSION_ENABLED_KEY
+EXTENSION_ENABLED_DEFAULT
 HIRAGANA_SIZE_PERCENTAGE_KEY
 HIRAGANA_SIZE_PERCENTAGE_DEFAULT
 HIRAGANA_COLOR_KEY
@@ -29,6 +31,27 @@ const broadcast = (event, value) => {
     tabs.forEach((t) => chrome.tabs.sendMessage(t.id, msg));
   });
 };
+
+function prepareToggleButton(initValue) {
+  const DISABLE_CLASSNAME = 'disabled';
+  const toggler = document.querySelector('.round-toggle-button');
+  if (!initValue) {
+    toggler.classList.add(DISABLE_CLASSNAME);
+  }
+
+  toggler.addEventListener('click', (e) => {
+    e.currentTarget.classList.toggle(DISABLE_CLASSNAME);
+    const enabled = !e.currentTarget.classList.contains(DISABLE_CLASSNAME);
+
+    // update to storage
+    const saveData = {
+      [EXTENSION_ENABLED_KEY]: enabled,
+    };
+    chrome.storage.sync.set(saveData);
+
+    broadcast(MIRI_EVENTS.TOGGLE_EXTENSION, enabled);
+  });
+}
 
 function prepareColorSwitcher(initValue) {
   const switcher = document.querySelector('.color-switcher');
@@ -103,26 +126,37 @@ function prepareKanaSelection(initValue) {
   });
 }
 
+function nullish(value, defaultValue) {
+  if (value === null || value === undefined) {
+    return defaultValue;
+  }
+  return value;
+}
+
 // load from storage
 chrome.storage.sync.get([
+  EXTENSION_ENABLED_KEY,
   HIRAGANA_SIZE_PERCENTAGE_KEY,
   HIRAGANA_NO_SELECTION_KEY,
   HIRAGANA_COLOR_KEY,
 ], (result = {}) => {
-  const pct = result[HIRAGANA_SIZE_PERCENTAGE_KEY] || HIRAGANA_SIZE_PERCENTAGE_DEFAULT;
+  const disabled = nullish(result[EXTENSION_ENABLED_KEY], EXTENSION_ENABLED_DEFAULT);
+  prepareToggleButton(disabled);
+
+  const pct = nullish(result[HIRAGANA_SIZE_PERCENTAGE_KEY], HIRAGANA_SIZE_PERCENTAGE_DEFAULT);
   prepareKanaSizeRange(pct);
 
-  const color = result[HIRAGANA_COLOR_KEY] || HIRAGANA_COLOR_DEFAULT;
+  const color = nullish(result[HIRAGANA_COLOR_KEY], HIRAGANA_COLOR_DEFAULT);
   prepareColorSwitcher(color);
 
-  const kanaless = result[HIRAGANA_NO_SELECTION_KEY] || HIRAGANA_NO_SELECTION_DEFAULT;
+  const kanaless = nullish(result[HIRAGANA_NO_SELECTION_KEY], HIRAGANA_NO_SELECTION_DEFAULT);
   prepareKanaSelection(kanaless);
 
   fillText('.kana-size .literal', 'ui_furigana_size', true);
   fillText('.kana-size .value', pct);
   fillText('.kana-selection .literal', 'ui_skip_furigana_selection', true);
   fillText('.footer .feedback', 'ui_feedback', true);
-  fillText('.footer .version', `ver ${chrome.runtime.getManifest().version}`);
+  fillText('.footer .version', `Ver ${chrome.runtime.getManifest().version}`);
 });
 
 // bind a tag
