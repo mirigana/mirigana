@@ -15,6 +15,62 @@ const isChrome = () => (!!window.chrome && (!!window.chrome.webstore || !!window
 const getKanaTag = (tag) => `<img alt="${tag}" src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0"></svg>' />`;
 const renderKana = (hirakana) => document.createTextNode(hirakana);
 
+// smash the token into the substring which not mixed kanji and kana
+const smash = (tkn) => {
+  // prepare the data structure
+  const surfaceGroup = [...tkn.s].reduce((group, curr, idx) => {
+    const isKanji = (/[一-龯]/).test(curr);
+    if (idx === 0 || !isKanji || isKanji !== group.lastIsKanji) {
+      group.push({
+        s: curr,
+        isKanji,
+        r: [],
+        p: tkn.p + idx,
+      });
+    } else {
+      // should merge
+      const last = group[group.length - 1];
+      last.s = `${last.s}${curr}`;
+    }
+
+    group.lastIsKanji = isKanji;
+    return group;
+  }, []);
+
+  // attach reading
+  const readArray = [...tkn.r];
+  surfaceGroup.forEach((s, idx) => {
+    const next = surfaceGroup[idx + 1];
+    for (let i = 0, len = readArray.length; i < len; i += 1) {
+      const curr = readArray[0];
+
+      if (s.r.length && next && next.s === curr) {
+        // matched the first kana
+        // break then try the next char in the surface form
+        break;
+      }
+
+      // move the current kana to the reading
+      s.r.push(curr);
+      readArray.shift();
+
+      if (!s.isKanji) {
+        // current char of the surface form is not a kanji
+        // break because the kana can only be matched one by one
+        break;
+      }
+    }
+  });
+
+  return surfaceGroup
+    .filter((sg) => sg.isKanji)
+    .map((sg) => ({
+      s: sg.s,
+      r: sg.r.join(''),
+      p: sg.p,
+    }));
+};
+
 // inject the css file into the head element
 const updateStyleNode = (id, content) => {
   const head = document.querySelector('head');
@@ -113,38 +169,8 @@ const renderRuby = (container, token) => {
 
   const text = container.innerText;
 
-  // smash the token contains both kanji and kana
-  // split it to <kana+kanji+kana> form
-  const smashed = [];
-  token.forEach((r) => {
-    if (!r.r) {
-      smashed.push(r);
-      return;
-    }
-
-    const asurface = r.s.split('');
-    const areading = r.r.split('');
-
-    const ahira = [];
-    const bhira = [];
-    while (asurface[0] === areading[0]) {
-      ahira.push(asurface[0]);
-      asurface.shift();
-      areading.shift();
-    }
-
-    while (asurface[asurface.length - 1] === areading[areading.length - 1]) {
-      bhira.push(asurface[asurface.length - 1]);
-      asurface.pop();
-      areading.pop();
-    }
-
-    smashed.push({
-      s: asurface.join(''),
-      r: areading.join(''),
-      p: r.p + ahira.length,
-    });
-  });
+  // smash the token to the kanji-only token
+  const smashed = token.reduce((ret, tkn) => ret.concat(smash(tkn)), []);
 
   // create blocks from smashed token
   let pos = 0;
