@@ -76,6 +76,16 @@ const registerMutationHook = () => {
               return;
             }
 
+            if (c.tagName === 'IMG') {
+              // the data-emoji-text will cause the bug that
+              // chrome copy the hidden ruby text unexpectly
+              // this is a workaround, may cause some issue
+              // on accessibility
+              if (c.dataset.emojiText) {
+                c.removeAttribute('data-emoji-text');
+              }
+            }
+
             if (c.tagName !== 'SPAN') {
               // child should has span sub-child
               return;
