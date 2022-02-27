@@ -22,7 +22,7 @@ if [[ -f $FIREFOX_PKG ]]; then
 fi
 
 cd src
-zip -r $ZIP_FILE_PATH * -x "*.DS_Store" -x "__MACOSX"
+zip -r $ZIP_FILE_PATH * -x "*.DS_Store" -x "__MACOSX" -x "background/*" -x "vendors/*"
 cd ..
 
 cp $CHROME_PKG $FIREFOX_PKG

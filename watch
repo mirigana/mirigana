@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+
+BACKGROUND_FILES=(
+"src/vendors/kuromoji.js"
+"src/constants.js"
+"src/background/rules/rule-fix.js"
+"src/background/rules/rule-month.js"
+"src/background/rules/rule-date.js"
+"src/background/rules/rule-counter.js"
+"src/background/rules/rule-purify.js"
+"src/background/token-rules.js"
+"src/background/memory-cache.js"
+"src/background/background.js"
+)
+
+TARGET_FILE="src/background.js"
+
+# trap ctrl-c and call ctrl_c()
+trap ctrl_c INT
+
+function ctrl_c() {
+    # echo "** Trapped CTRL-C"
+    exit 0
+}
+
+
+fwpid=0;
+
+while true; do
+    rm $TARGET_FILE
+    for i in ${!BACKGROUND_FILES[@]}; do
+        cat ${BACKGROUND_FILES[$i]} >> $TARGET_FILE
+    done
+
+    echo $(date -u)
+
+    sleep 0.5
+
+    (
+        fswatch --event Updated -1 ${BACKGROUND_FILES[@]} && \
+        echo "above file has been changed."
+    )
+
+    # store the fswatch pid
+    fwpid=$!
+done

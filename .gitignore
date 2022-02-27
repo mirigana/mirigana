@@ -4,3 +4,4 @@ playground/
 legacy/
 images-raw/
 mirigana_*.zip
+src/background.js

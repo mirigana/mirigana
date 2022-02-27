@@ -1,7 +1,7 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "mirigana",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "default_locale": "en",
 
   "description": "__MSG_extension_description__",
@@ -14,22 +14,10 @@
   },
 
   "background": {
-    "scripts": [
-      "vendors/kuromoji.js",
-      "constants.js",
-      "background/rules/rule-fix.js",
-      "background/rules/rule-month.js",
-      "background/rules/rule-date.js",
-      "background/rules/rule-counter.js",
-      "background/rules/rule-purify.js",
-      "background/token-rules.js",
-      "background/memory-cache.js",
-      "background/background.js"
-    ],
-    "persistent": true
+    "service_worker": "background.js"
   },
 
-  "page_action": {
+  "action": {
     "default_icon": {
       "16": "icons/action-icon-16.png",
       "48": "icons/action-icon-48.png",
