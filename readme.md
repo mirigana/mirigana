@@ -3,6 +3,8 @@ a chrome extension to insert furigana for tweets.
 
 ![](screenshot/screen2.png)
 
+**[反馈问题](https://github.com/mirigana/mirigana/issues/new) 用中文也可以**
+
 ## Installation
 
 Chrome Web Store

@@ -15,11 +15,35 @@ const isChrome = () => (!!window.chrome && (!!window.chrome.webstore || !!window
 const getKanaTag = (tag) => `<img alt="${tag}" src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0"></svg>' />`;
 const renderKana = (hirakana) => document.createTextNode(hirakana);
 
+const kanaConvert = (kana, isHiraToKata) => {
+  if (isHiraToKata && !/[ぁ-ん]/.test(kana)) {
+    return kana;
+  }
+  if (!isHiraToKata && !/[ァ-ン]/.test(kana)) {
+    return kana;
+  }
+  const MAGIC = isHiraToKata ? 96 : -96;
+  return String.fromCharCode(kana.charCodeAt(0) + MAGIC);
+};
+
+const hira2kata = (str) => str.split('').map((c) => kanaConvert(c, true)).join('');
+
+const kata2hira = (str) => str.split('').map((c) => kanaConvert(c, false)).join('');
+
+const sameKana = (kana1, kana2) => hira2kata(kana1) === hira2kata(kana2);
+
+const countSameChar = (arr, char) => arr.reduce((a, b) => {
+  if (b === char) {
+    a += 1;
+  }
+  return a;
+}, 0);
+
 // smash the token into the substring which not mixed kanji and kana
 const smash = (tkn) => {
   // prepare the data structure
   const surfaceGroup = [...tkn.s].reduce((group, curr, idx) => {
-    const isKanji = (/[一-龯]/).test(curr);
+    const isKanji = (/[一-龯々]/).test(curr);
     if (idx === 0 || !isKanji || isKanji !== group.lastIsKanji) {
       group.push({
         s: curr,
@@ -43,9 +67,15 @@ const smash = (tkn) => {
     const next = surfaceGroup[idx + 1];
     for (let i = 0, len = readArray.length; i < len; i += 1) {
       const curr = readArray[0];
+      const currIsSingle = (countSameChar(readArray, curr) === 1);
 
-      if (s.r.length && next && next.s === curr) {
+      if (
+        s.r.length
+        && next
+        && sameKana(next.s, curr)
+        && currIsSingle) {
         // matched the first kana
+        // dont break when there are same curr in the readArray
         // break then try the next char in the surface form
         break;
       }
