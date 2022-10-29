@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e # exit when any command fails
 
 VER=`cat src/manifest.json| jq -r '.version'`
 
