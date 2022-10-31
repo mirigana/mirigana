@@ -4,7 +4,8 @@
   "description": "a chrome extension to annotate tweets with katagana.",
   "main": "index.js",
   "scripts": {
-    "build": "./pack.sh"
+    "watch": "./watch",
+    "build": "./pack"
   },
   "keywords": [],
   "author": "",
