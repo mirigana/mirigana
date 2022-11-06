@@ -19,7 +19,7 @@ function fillText(id, textOrKey, useKey) {
 }
 
 const broadcast = (event, value) => {
-  chrome.tabs.query({ url: 'https://twitter.com/*' }, (tabs) => {
+  chrome.tabs.query({ url: 'https://*.twitter.com/*' }, (tabs) => {
     if (!tabs.length) {
       return;
     }

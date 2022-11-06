@@ -33,7 +33,10 @@
   },
 
   "content_scripts": [{
-    "matches": ["https://twitter.com/*"],
+    "matches": [
+      "https://twitter.com/*",
+      "https://tweetdeck.twitter.com/*"
+    ],
     "js": [
       "constants.js",
       "content_scripts/console.js",
