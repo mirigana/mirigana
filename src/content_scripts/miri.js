@@ -69,7 +69,7 @@ class Miri {
     }, (response) => {
       debug('token responsed');
       if (!response) {
-        this.log('Error: tokens response is invalid.');
+        log('Error: tokens response is invalid.');
         return;
       }
 

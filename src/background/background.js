@@ -135,10 +135,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 // disable page action icon for the site other than twitter.com
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (tab.url.match(/^https:\/\/.*twitter.com\//)) {
-    chrome.action.show(tabId);
-  } else {
-    chrome.action.hide(tabId);
-  }
+chrome.tabs.onActivated.addListener((activeInfo) => {
+  chrome.tabs.get(activeInfo.tabId).then((tab) => {
+    if (tab.url.match(/^https:\/\/(tweetdeck.)?twitter\.com\//)) {
+      chrome.action.enable();
+    } else {
+      chrome.action.disable();
+    }
+  })
 });
