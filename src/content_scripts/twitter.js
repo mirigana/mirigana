@@ -197,6 +197,7 @@ const registerDeckMutationHook = () => {
             }
 
             const textSpan = document.createElement("span");
+            textSpan.textContent = textContent;
             article.replaceChild(textSpan, c);
             tweetBag.push({
               c: textSpan,
