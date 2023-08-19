@@ -217,7 +217,7 @@ const registerDeckMutationHook = () => {
 
 // main
 log('initialized.');
-registerMutationHook();
+setTimeout(registerMutationHook, 1000);
 registerDeckMutationHook();
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
