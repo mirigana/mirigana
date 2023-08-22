@@ -217,8 +217,9 @@ const registerDeckMutationHook = () => {
 
 // main
 log('initialized.');
+// delay hook registration to give other extensions time to inject
 setTimeout(registerMutationHook, 100);
-registerDeckMutationHook();
+setTimeout(registerDeckMutationHook, 100);
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const { event, value } = request;
