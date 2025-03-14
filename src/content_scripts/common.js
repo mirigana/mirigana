@@ -154,6 +154,13 @@ const renderKanji = (hirakana, kanji) => {
 };
 
 const renderRuby = (container, token) => {
+  const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  const defaultColor = isDarkMode ? HIRAGANA_COLORS[5].value : HIRAGANA_COLORS[0].value
+
+  updateRubyColorStyle('miri-ruby-color', defaultColor);
+  SettingStorage.set({ color: defaultColor });
+
   // hidden ruby on contextmenu
   if (isChrome()) {
     const tweetContainer = container.parentElement;
