@@ -62,6 +62,11 @@ function prepareColorSwitcher(initValue) {
     tile.style.backgroundColor = c.value;
     tile.dataset.color = c.value;
 
+    if (!c.value) {
+      tile.style.borderRight = '22px solid white';
+      tile.style.borderTop = '22px solid black';
+    }
+
     if (c.value === initValue) {
       tile.className += ' active';
     }

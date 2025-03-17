@@ -139,6 +139,10 @@ rt.furigana {
 };
 
 const updateRubyColorStyle = (id, color) => {
+  if (!color) {
+    // default color, do nothing
+    color = 'initial';
+  }
   updateStyleNode(id, `
 rt.furigana {
   color: ${color};

@@ -23,29 +23,33 @@ const PARSE_ENGINES = [
 
 const HIRAGANA_COLORS = [
   {
-    key: 'black',
-    value: '#000',
+    key: 'default',
+    value: '',
   },
   {
     key: 'grey',
     value: '#6C7A89',
   },
   {
-    key: 'blue',
-    value: '#3498DB',
+    key: 'yellow',
+    value: 'rgb(255, 212, 0)',
+  },
+  {
+    key: 'pink',
+    value: 'rgb(249, 24, 128)',
   },
   {
     key: 'purple',
-    value: '#9B59B6',
+    value: 'rgb(120, 86, 255)',
   },
   {
-    key: 'red',
-    value: '#E74C3C',
+    key: 'orange',
+    value: 'rgb(255, 122, 0)',
   },
   {
-    key: 'white',
-    value: '#FFFFFF',
-  },
+    key: 'green',
+    value: 'rgb(0, 186, 124)',
+  }
 ];
 
 const EXTENSION_ENABLED_KEY = 'EXTENSION_ENABLED';
