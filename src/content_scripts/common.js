@@ -32,6 +32,9 @@ const kata2hira = (str) => str.split('').map((c) => kanaConvert(c, false)).join(
 
 const sameKana = (kana1, kana2) => hira2kata(kana1) === hira2kata(kana2);
 
+// https://stackoverflow.com/questions/70302587/how-to-use-substring-with-special-unicode-characters
+const substrEx = (text, from, len) => [...text].slice(from, len).join('');
+
 const countSameChar = (arr, char) => arr.reduce((a, b) => {
   if (b === char) {
     a += 1;
@@ -39,11 +42,20 @@ const countSameChar = (arr, char) => arr.reduce((a, b) => {
   return a;
 }, 0);
 
+const countSameCharForSurfaceGroup = (surfaceGroup, char, blockIndex) => {
+  return surfaceGroup.reduce((acc, sg, idx) => {
+    if(idx > blockIndex && sg.s === char) {
+        acc +=1;
+    }
+    return acc;
+  }, 0);
+}
+
 // smash the token into the substring which not mixed kanji and kana
 const smash = (tkn) => {
   // prepare the data structure
   const surfaceGroup = [...tkn.s].reduce((group, curr, idx) => {
-    const isKanji = (/[一-龯々]/).test(curr);
+    const isKanji = !(/[ぁ-んァ-ン]/).test(curr);
     if (idx === 0 || !isKanji || isKanji !== group.lastIsKanji) {
       group.push({
         s: curr,
@@ -63,34 +75,30 @@ const smash = (tkn) => {
 
   // attach reading
   const readArray = [...tkn.r];
-  surfaceGroup.forEach((s, idx) => {
-    const next = surfaceGroup[idx + 1];
-    for (let i = 0, len = readArray.length; i < len; i += 1) {
-      const curr = readArray[0];
-      const currIsSingle = (countSameChar(readArray, curr) === 1);
+  for (let i = 0, blockIndex = 0; i < readArray.length;) {
+    const curr = readArray.shift();
+    const block = surfaceGroup[blockIndex];
 
-      if (
-        s.r.length
-        && next
-        && sameKana(next.s, curr)
-        && currIsSingle) {
-        // matched the first kana
-        // dont break when there are same curr in the readArray
-        // break then try the next char in the surface form
-        break;
-      }
-
-      // move the current kana to the reading
-      s.r.push(curr);
-      readArray.shift();
-
-      if (!s.isKanji) {
-        // current char of the surface form is not a kanji
-        // break because the kana can only be matched one by one
-        break;
-      }
+    if (!block.isKanji) {
+      block.r.push(curr);
+      blockIndex += 1;
+      continue;
     }
-  });
+
+    const nextBlock = surfaceGroup[blockIndex + 1];
+    if (
+      nextBlock
+      && !nextBlock.isKanji
+      && curr === nextBlock.s
+      && countSameChar(readArray, curr) - countSameCharForSurfaceGroup(surfaceGroup, curr, blockIndex + 1) === 0
+    ) {
+      nextBlock.r.push(curr);
+      blockIndex += 2;
+      continue;
+    }
+
+    block.r.push(curr);
+  }
 
   return surfaceGroup
     .filter((sg) => sg.isKanji)
@@ -158,21 +166,6 @@ const renderRuby = (container, token) => {
   if (isChrome()) {
     const tweetContainer = container.parentElement;
 
-    // method1:
-    // hide furigana on context menu open
-    // tweetContainer.addEventListener('contextmenu', () => {
-    //   if (!SettingStorage.get('kanaless')) {
-    //     return;
-    //   }
-
-    //   container.querySelectorAll('.furigana').forEach((rb) => {
-    //     rb.style.visibility = 'hidden';
-    //   });
-    //   window.__mirigana__.hiddenRubyContainers.push(tweetContainer);
-    // });
-
-
-    // method2:
     // hide furigana on text being selected
     document.addEventListener('selectionchange', () => {
       if (!SettingStorage.get('kanaless')) {
@@ -208,7 +201,7 @@ const renderRuby = (container, token) => {
   smashed.forEach((r) => {
     if (r.p !== pos) {
       blocks.push({
-        s: text.substr(pos, r.p - pos),
+        s: substrEx(text, pos, r.p)
       });
       pos = r.p;
     }
@@ -221,7 +214,7 @@ const renderRuby = (container, token) => {
 
   if (text.length > pos) {
     blocks.push({
-      s: text.substr(pos),
+      s: substrEx(text, pos)
     });
   }
 
