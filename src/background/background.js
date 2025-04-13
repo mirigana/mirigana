@@ -14,7 +14,7 @@ CURRENT_PARSE_ENGINE_DEFAULT
 MIRI_EVENTS
 PARSE_ENGINES
 
-rebulidToken
+rebulidTokens
 retrieveFromCache
 persiseToCache
 */
@@ -38,12 +38,8 @@ chrome.storage.local.get((result = {}) => {
     // local
     kuromoji.builder({ dicPath: 'data/' }).build().then((tokenizer) => {
       listenTokenParseMessage((tweets, sendResponse) => {
-        const results = tweets.map((t) => {
-          const token = tokenizer.tokenize(t);
-          const ret = rebulidToken(token);
-          return ret;
-        });
-        sendResponse(results);
+        const results = tweets.map((t) => tokenizer.tokenize(t));
+        sendResponse(rebulidTokens(results));
       });
     });
   } else if (currentEngineKey === PARSE_ENGINES[1].key) {
@@ -80,7 +76,6 @@ chrome.storage.local.get((result = {}) => {
             return (v);
           });
 
-          // console.log('completed:', results);
           sendResponse(results);
         })
         .catch((error) => {

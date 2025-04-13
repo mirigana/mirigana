@@ -70,7 +70,9 @@ const ruleDate = (token) => {
     }
     const prev = token[i - 1];
 
-    if (prev.surface_form !== '月' && prev.pos_detail_1 !== '副詞可能') {
+    if (prev.surface_form !== '月'
+      && prev.pos_detail_1 !== '副詞可能'
+      && prev.pos_detail_1 !== '固有名詞') {
       // not 5月 and 五月
       result.push(curr);
       continue;
