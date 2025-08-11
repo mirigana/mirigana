@@ -4,6 +4,7 @@
 BACKGROUND_FILES=(
 "src/vendors/kuromoji.js"
 "src/constants.js"
+"src/common-utils.js"
 "src/background/rules/rule-month.js"
 "src/background/rules/rule-date.js"
 "src/background/rules/rule-counter.js"
@@ -32,7 +33,7 @@ while true; do
         cat ${BACKGROUND_FILES[$i]} >> $TARGET_FILE
     done
 
-    echo $(date -u)
+    echo $(date)
 
     sleep 0.5
 

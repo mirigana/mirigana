@@ -9,57 +9,27 @@
         font-style:  normal;
         font-weight: 700;
         font-display: swap;
-        src: url("Inter-Bold.woff2?v=3.19") format("woff2"),
-             url("Inter-Bold.woff?v=3.19") format("woff");
+        src: url("Inter-Bold.woff2") format("woff2");
       }
 
       body {
         width: 200px;
         font-family: system-ui, sans-serif;
         font-size: 75%;
+        margin-bottom: 4px;
       }
 
       .section {
-        padding: 0 0 15px 0;
-        /*position: relative;*/
-      }
-      .section:first-child {
-        padding: 5px 0 15px 0;
-      }
-      .section:last-child {
-        padding: 0;
+        padding: 5px 0;
+        overflow: hidden;
       }
 
       .grid {
         display: inline-block;
       }
 
-      .kana-selection {
-        line-height: 20px;
-      }
-      .kana-selection input {
-        vertical-align: middle;
-      }
-
-      .block {
-        box-sizing: border-box;
-        width: 22px;
-        height: 22px;
-        cursor: pointer;
-        float: left;
-        margin: 2px;
-        outline: 1px solid black;
-      }
-
-      .color-switcher:after {
-        content: '';
-        display: block;
-        clear: both;
-      }
-
-      .active {
-        outline: 2px solid #F2CA27;
-        cursor: default;
+      .kana-size .literal {
+        padding: 0 0 0 5px;
       }
 
       .footer {
@@ -126,43 +96,113 @@
         left: 2px;
       }
 
+      .app-icon {
+        width: 32px;
+        height: 32px;
+        position: relative;
+        border: 1px solid gray;
+        overflow: hidden;
+        margin-left: 2px;
+        cursor: pointer;
+      }
+
+      .app-icon div {
+        position: absolute;
+        color: orange;
+        font-size: 17px;
+        top: 16px;
+      }
+
+      .app-icon ruby {
+        font-size: 10px;
+        color: black;
+        position: absolute;
+        top: 7px;
+        left: 2px;
+      }
+
+      .flex {
+        display: flex;
+      }
+
+      .flex-0-0-auto {
+        flex: 0 0 auto;
+      }
+
+      .site-name {
+        overflow: scroll;
+        align-items: center;
+        flex: 1;
+        margin: 0 0 0 5px;
+      }
+
+      .kana-size input {
+        width: 95%;
+        margin-top: 5px;
+      }
+
+      .error-overlay {
+        position: absolute;
+        top: 0;
+        width: 200px;
+        height: 100%;
+        background: white;
+        text-align: center;
+        align-content: center;
+      }
+
     </style>
   </head>
   <body>
     <div class="main">
+      <div class="section head flex">
+        <div class="grid">
+          <div class="round-toggle-button btn-toggle-site">
+            <div class="button"></div>
+          </div>
+        </div>
+        <div class="grid flex site-name">
+        </div>
+      </div>
+
+      <hr />
+
       <div class="section kana-size">
-        <span class="literal"></span>
-        <span class="value"></span>
-        %
-        <input type="range" min="50" max="85" step="5" style="width: 180px" />
-      </div>
-
-      <div class="section color-switcher">
-      </div>
-
-      <div class="section kana-selection">
-        <label>
-          <input class="value" type="checkbox" />
+        <div>
           <span class="literal"></span>
-        </label>
+          <span class="value"></span>
+          %
+        </div>
+        <div>
+          <input type="range" min="50" max="90" step="5" />
+        </div>
       </div>
 
       <hr />
 
       <div class="section footer">
         <div class="grid">
-          <div class="round-toggle-button">
-            <div class="button"></div>
+          <div class="app-icon">
+            <ruby>かんじ</ruby>
+            <div>漢字</div>
           </div>
         </div>
         <div class="grid">
-          <span class="version display-block"></span>
+          <div>
+            <span class="version display-block"></span>
+          </div>
           <a class="feedback display-block" href="#"></a>
         </div>
       </div>
     </div>
 
+    <div class="error-overlay">
+      <div>Please refresh current page to enabled this extension.</div>
+    </div>
+
     <script src="/constants.js"></script>
+    <script src="/components/dom.js"></script>
+    <script src="/common-utils.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

@@ -13,10 +13,6 @@
     "message": "Font Size:",
     "description": ""
   },
-  "ui_skip_furigana_selection": {
-    "message": "Hide furigana on selecting",
-    "description": ""
-  },
   "ui_feedback": {
     "message": "Feedback",
     "description": ""

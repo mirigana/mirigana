@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "mirigana",
-  "version": "1.6.0",
+  "version": "2.0.0",
   "default_locale": "en",
 
   "description": "__MSG_extension_description__",
@@ -34,17 +34,25 @@
 
   "content_scripts": [{
     "matches": [
-      "https://x.com/*",
-      "https://twitter.com/*",
-      "https://tweetdeck.twitter.com/*"
+      "*://*/*"
     ],
     "js": [
       "constants.js",
+      "common-utils.js",
+      "vendors/Readability.js",
+      "vendors/JSDOMParser.js",
+      "content_scripts/utils.js",
       "content_scripts/console.js",
-      "content_scripts/setting-storage.js",
-      "content_scripts/common.js",
       "content_scripts/miri.js",
-      "content_scripts/twitter.js"
+      "content_scripts/sites/common.js"
+    ]
+  }, {
+    "matches": [
+      "https://x.com/*",
+      "https://twitter.com/*"
+    ],
+    "js": [
+      "content_scripts/sites/twitter.js"
     ]
   }],
 

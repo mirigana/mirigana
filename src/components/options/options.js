@@ -1,7 +1,15 @@
 /* global
+chrome
+
 PARSE_ENGINES
 CURRENT_PARSE_ENGINE_KEY
 CURRENT_PARSE_ENGINE_DEFAULT
+
+text
+div
+span
+fillText
+MiriStorage
 */
 
 const optionsState = {
@@ -9,19 +17,13 @@ const optionsState = {
   engineKeyOrigin: CURRENT_PARSE_ENGINE_DEFAULT,
 };
 
-function localizeElement(ele) {
-  const key = ele.innerText.replace(/^__MSG_/, '');
-  ele.innerText = chrome.i18n.getMessage(key);
-}
-
 const mainContainer = document.querySelector('.main-container');
 const optionContainer = mainContainer.querySelector('.option');
-const optionLabel = mainContainer.querySelector('.label');
-const optionNotice = mainContainer.querySelector('.notice');
 const optionApplyBtn = mainContainer.querySelector('.apply');
-localizeElement(optionLabel);
-localizeElement(optionNotice);
-localizeElement(optionApplyBtn);
+fillText('.label', 'ui_engine_label', true);
+fillText('.notice', 'ui_engine_note', true);
+fillText('.apply', 'ui_btn_apply', true);
+
 
 optionApplyBtn.addEventListener('click', () => {
   chrome.storage.local.set({
@@ -33,41 +35,6 @@ optionApplyBtn.addEventListener('click', () => {
     window.close();
   });
 });
-
-function createDOM(type, options, ...children) {
-  const container = document.createElement(type);
-  if (typeof options === 'string') {
-    container.className = options;
-  } else {
-    const { className, ...restOpts } = options;
-    container.className = className;
-
-    Object.keys(restOpts).forEach((k) => {
-      if (!k.startsWith('on')) {
-        return;
-      }
-
-      const event = restOpts[k];
-      const eventName = k.replace('on', '').toLowerCase();
-      container.addEventListener(eventName, event);
-    });
-  }
-
-  children.forEach((child) => container.appendChild(child));
-  return container;
-}
-
-function text(textContent) {
-  return document.createTextNode(textContent);
-}
-
-function div(options, ...children) {
-  return createDOM('div', options, ...children);
-}
-
-function span(options, ...children) {
-  return createDOM('span', options, ...children);
-}
 
 function composeEngineOption(currentEngine) {
   PARSE_ENGINES.forEach((engine) => {
@@ -95,21 +62,32 @@ function composeEngineOption(currentEngine) {
     const title = chrome.i18n.getMessage(`${engine.i18nKey}_title`);
     const description = chrome.i18n.getMessage(`${engine.i18nKey}_description`);
 
-    const optionBlock = div(blockOptions,
-      div('block-selector',
-        div('wrap',
-          div('title',
+    const optionBlock = div(
+      blockOptions,
+      div(
+        'block-selector',
+        div(
+          'wrap',
+          div(
+            'title',
             text(title),
-            span('check-mark', text('✓'))),
-          div('description',
-            text(description)))));
+            span('check-mark', text('✓')),
+          ),
+          div(
+            'description',
+            text(description),
+          ),
+        ),
+      ),
+    );
 
     optionContainer.appendChild(optionBlock);
   });
 }
 
-chrome.storage.local.get((result = {}) => {
-  let currentEngine = result[CURRENT_PARSE_ENGINE_KEY];
+async function initializeOptions() {
+  const options = await MiriStorage.local.get();
+  let currentEngine = options[CURRENT_PARSE_ENGINE_KEY];
 
   if (!currentEngine) {
     // write the default value immedately
@@ -122,4 +100,6 @@ chrome.storage.local.get((result = {}) => {
   optionsState[CURRENT_PARSE_ENGINE_KEY] = currentEngine;
   optionsState.engineKeyOrigin = currentEngine;
   composeEngineOption(currentEngine);
-});
+}
+
+initializeOptions();

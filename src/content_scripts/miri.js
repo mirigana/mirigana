@@ -2,52 +2,40 @@
 
 MIRI_EVENTS
 
+chrome
 log
 debug
-SettingStorage
+renderRuby
 */
 
 /* eslint class-methods-use-this: ["error", { "exceptMethods": ["log"] }] */
 // eslint-disable-next-line no-unused-vars
 class Miri {
-  constructor(options) {
+  constructor(options = {}) {
     const {
       throttleTimeout,
-      onTokenReady,
     } = options;
 
-    this.tweetPool = [];
+    this.articlePool = [];
     this.throttleTimeout = throttleTimeout || 3500;
     this.throttleTimer = null;
 
-    this.onTokenReady = onTokenReady;
     this.lastRequestTokens = new Date().getTime() - this.throttleTimeout;
-
-    SettingStorage.on('loaded', () => this.requestTokensThrottle());
   }
 
-  // TODO rewrite this method with setTimeout
-  // const timer = setTimeout(() => ..., this.throttleTimeout)
-  // if timer exists ignore
-  // if time is null schedule another setTimeout()
-  //
   // TODO add new feature
   // fast cache render
   // ignore the throttle time, request from the cache
   // if hit the result in the cache render the ruby
   // otherwise wait for the throttle timeout
   requestTokensThrottle() {
-    debug('requestTokensThrottle() triggered');
-
     // clear last scheduled throttle task
     clearTimeout(this.throttleTimer);
 
     const now = new Date().getTime();
     const elapsed = now - this.lastRequestTokens;
-    const shouldRequest = this.tweetPool.length
+    const shouldRequest = this.articlePool.length
       && (elapsed > this.throttleTimeout);
-
-    debug('now:', now, 'last:', this.lastRequestTokens, 'elapsed:', elapsed, 'shouldRequest:', shouldRequest);
 
     if (!shouldRequest) {
       // scheduled a task
@@ -56,15 +44,16 @@ class Miri {
       return;
     }
 
-    debug('requestTokensThrottle() approved', this.tweetPool);
+    debug('requestTokensThrottle() approved', this.articlePool);
     this.lastRequestTokens = now;
 
-    const tweets = this.tweetPool.map((tb) => tb.tc);
-    const origTweetPool = [...this.tweetPool];
-    this.tweetPool = [];
+    const tweets = this.articlePool.map((tb) => tb.tc);
+    const origTweetPool = [...this.articlePool];
+    this.articlePool = [];
 
     chrome.runtime.sendMessage({
       event: MIRI_EVENTS.REQUEST_TOKEN,
+      // TODO rename varibable name to more common name
       tweets,
     }, (response) => {
       debug('token responsed');
@@ -79,22 +68,19 @@ class Miri {
       }
 
       response.forEach((t, i) => {
-        if (!this.onTokenReady) {
-          debug('onTokenReady is not defined.');
-          return;
-        }
-
         const { c } = origTweetPool[i];
-        this.onTokenReady(c, t);
+        renderRuby(c, t);
       });
     });
   }
 
-  addTweets(tweetBag) {
-    tweetBag.map((tb) => tb.tc);
+  parseArticle(articleBag) {
+    if (!articleBag.length) {
+      return;
+    }
 
-    tweetBag.forEach((tb) => {
-      this.tweetPool.push(tb);
+    articleBag.forEach((bag) => {
+      this.articlePool.push(bag);
     });
 
     this.requestTokensThrottle();
