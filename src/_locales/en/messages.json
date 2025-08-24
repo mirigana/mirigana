@@ -4,17 +4,21 @@
     "description": ""
   },
 
-  "ui_btn_apply": {
-    "message": "Apply",
-    "description": ""
+  "ui_popup_error_overlay": {
+    "message": "Please refresh current page to enable this extension"
   },
 
-  "ui_furigana_size": {
+  "ui_popup_furigana_size": {
     "message": "Font Size:",
     "description": ""
   },
-  "ui_feedback": {
+  "ui_popup_feedback": {
     "message": "Feedback",
+    "description": ""
+  },
+
+  "ui_btn_apply": {
+    "message": "Apply",
     "description": ""
   },
 

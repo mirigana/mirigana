@@ -1,6 +1,6 @@
 {
   "name": "mirigana",
-  "version": "1.6.0",
+  "version": "2.0.2",
   "description": "a chrome extension to annotate tweets with katagana.",
   "main": "index.js",
   "scripts": {

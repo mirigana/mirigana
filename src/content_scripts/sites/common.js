@@ -1,6 +1,7 @@
 /* global
 MIRI_EVENTS
-HIRAGANA_SIZE_PERCENTAGE_KEY
+FURIGANA_SIZE_KEY
+FURIGANA_OPACITY_KEY
 SITE_RUBY_DISABLED_KEY
 
 Miri
@@ -10,6 +11,7 @@ now
 isContainsKanji
 setRubyVisibility
 updateRubySizeStyle
+updateRubyOpacityStyle
 updateNoSelectStyle
 MiriUtil
 initializeMiri
@@ -30,8 +32,19 @@ function extractElementsForRubying(rootElement) {
   const walker = document.createTreeWalker(
     rootElement,
     NodeFilter.SHOW_TEXT,
-    null,
-    false,
+    (node) => {
+      const { parentElement } = node;
+      const { tagName: parentTagName } = parentElement;
+      if (parentTagName === 'SCRIPT') {
+        return NodeFilter.FILTER_REJECT;
+      }
+
+      if (parentTagName === 'RUBY') {
+        return NodeFilter.FILTER_REJECT;
+      }
+
+      return NodeFilter.FILTER_ACCEPT;
+    },
   );
 
   let currentNode;
@@ -46,14 +59,8 @@ function extractElementsForRubying(rootElement) {
       continue;
     }
 
-    const { parentElement } = currentNode;
-    if (parentElement.tagName === 'RUBY') {
-      continue;
-    }
-
-    if (parentElement.querySelector(':scope > ruby')) {
-      // already handled with ruby, skip
-      continue;
+    if (textContent.length > 2048) {
+      debug('textContent over size:', currentNode);
     }
 
     const container = currentNode;
@@ -196,8 +203,10 @@ MiriUtil.addEventListener(MIRI_EVENTS.SET_SITE_SETTINGS, (request, sender, sendR
 
   localStorage.setItem(itemKey, itemValue);
 
-  if (HIRAGANA_SIZE_PERCENTAGE_KEY === itemKey) {
-    updateRubySizeStyle('miri-ruby', itemValue);
+  if (FURIGANA_SIZE_KEY === itemKey) {
+    updateRubySizeStyle('miri-ruby-size', itemValue);
+  } else if (FURIGANA_OPACITY_KEY === itemKey) {
+    updateRubyOpacityStyle('miri-ruby-opacity', itemValue);
   } else if (SITE_RUBY_DISABLED_KEY === itemKey) {
     setRubyVisibility('miri-ruby-visible', !itemValue);
     if (!window.__mirigana__.initialized) {

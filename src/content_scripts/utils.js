@@ -2,9 +2,9 @@
 /* global
 
 MIRI_EVENTS
-SITE_RUBY_DISABLED_KEY,
-HIRAGANA_SIZE_PERCENTAGE_KEY,
-CURRENT_PARSE_ENGINE_KEY,
+SITE_RUBY_DISABLED_KEY
+FURIGANA_SIZE_KEY
+FURIGANA_OPACITY_KEY
 
 SettingStorage
 debug
@@ -152,6 +152,13 @@ rt.furigana {
 }`);
 };
 
+const updateRubyOpacityStyle = (id, opacity) => {
+  updateStyleNode(id, `
+rt.furigana {
+  opacity: ${opacity};
+}`);
+};
+
 const updateNoSelectStyle = (id, kanaless) => {
   updateStyleNode(id, `
 rt.furigana {
@@ -213,8 +220,8 @@ const renderRuby = (container, token) => {
 function loadSiteSettings() {
   const result = [
     SITE_RUBY_DISABLED_KEY,
-    HIRAGANA_SIZE_PERCENTAGE_KEY,
-    CURRENT_PARSE_ENGINE_KEY,
+    FURIGANA_SIZE_KEY,
+    FURIGANA_OPACITY_KEY,
   ].reduce((acc, k) => {
     acc[k] = localStorage.getItem(k);
     return acc;
@@ -237,19 +244,16 @@ function initializeMiri(func, options = {}) {
 
   const isTwitter = ['x.com', 'twitter.com'].some((hostname) => hostname === window.location.hostname);
   const lang = document.querySelector(':root').getAttribute('lang');
-  const isJaSite = lang && lang.includes('ja');
+  // const isJaSite = lang && lang.includes('ja');
 
   const settings = loadSiteSettings();
   let disabled = settings[SITE_RUBY_DISABLED_KEY];
   debug('settings of current site: ', settings);
 
-  // if twitter enable by default
-  // if ja site, enable by default
-  // if non-ja site, disable by default
+  // if twitter enabled by default
+  // for other sites, disabled by default
   if (disabled === null) {
     if (isTwitter) {
-      disabled = false;
-    } else if (isJaSite) {
       disabled = false;
     } else {
       disabled = true;
@@ -263,7 +267,8 @@ function initializeMiri(func, options = {}) {
     return;
   }
 
-  updateRubySizeStyle('miri-ruby', settings[HIRAGANA_SIZE_PERCENTAGE_KEY]);
+  updateRubySizeStyle('miri-ruby-size', settings[FURIGANA_SIZE_KEY]);
+  updateRubyOpacityStyle('miri-ruby-opacity', settings[FURIGANA_OPACITY_KEY]);
 
   window.__mirigana__.initialized = true;
   debug('start rubying.');

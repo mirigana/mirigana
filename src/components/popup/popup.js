@@ -1,8 +1,11 @@
 /* global
 chrome
 
-HIRAGANA_SIZE_PERCENTAGE_KEY
-HIRAGANA_SIZE_PERCENTAGE_DEFAULT
+FURIGANA_SIZE_KEY
+FURIGANA_SIZE_DEFAULT
+FURIGANA_OPACITY_KEY
+FURIGANA_OPACITY_DEFAULT
+
 SITE_RUBY_DISABLED_KEY
 SITE_RUBY_DISABLED_DEFAULT
 MIRI_EVENTS
@@ -28,18 +31,15 @@ function prepareToggleButton(initValue) {
   });
 }
 
-function prepareKanaSizeRange(initValue) {
-  const range = document.querySelector('.kana-size input');
+function prepareProgressControl(inputSelector, storageKey, initValue) {
+  const range = document.querySelector(`${inputSelector} input`);
   range.value = initValue;
 
   range.addEventListener('input', (e) => {
-    const pct = +e.target.value;
-    fillText('.kana-size .value', pct);
-
-    MiriStorage.site.set(HIRAGANA_SIZE_PERCENTAGE_KEY, pct);
+    const value = +e.target.value;
+    MiriStorage.site.set(storageKey, value);
   });
 }
-
 
 function nullish(value, defaultValue) {
   if (value === null || value === undefined) {
@@ -81,15 +81,20 @@ async function initializePopup() {
   prepareToggleButton(settings[SITE_RUBY_DISABLED_KEY]);
 
   const pct = nullish(
-    settings[HIRAGANA_SIZE_PERCENTAGE_KEY],
-    HIRAGANA_SIZE_PERCENTAGE_DEFAULT,
+    settings[FURIGANA_SIZE_KEY],
+    FURIGANA_SIZE_DEFAULT,
   );
-  prepareKanaSizeRange(pct);
+  prepareProgressControl('.kana-size', FURIGANA_SIZE_KEY, pct);
 
+  const opacity = nullish(
+    settings[FURIGANA_OPACITY_KEY],
+    FURIGANA_OPACITY_DEFAULT,
+  );
+  prepareProgressControl('.kana-opacity', FURIGANA_OPACITY_KEY, opacity);
+
+  fillText('.error-overlay div', 'ui_popup_error_overlay', true);
   fillText('.site-name', settings.hostname);
-  fillText('.kana-size .literal', 'ui_furigana_size', true);
-  fillText('.kana-size .value', pct);
-  fillText('.footer .feedback', 'ui_feedback', true);
+  fillText('.footer .feedback', 'ui_popup_feedback', true);
   fillText('.footer .version', `${chrome.runtime.getManifest().version}`);
 }
 

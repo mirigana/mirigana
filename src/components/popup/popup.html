@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <link rel="preload" href="Inter-Bold.woff2" as="font" crossorigin="anonymous">
+
     <style>
       @font-face {
         font-family: 'Inter';
@@ -10,6 +10,24 @@
         font-weight: 700;
         font-display: swap;
         src: url("Inter-Bold.woff2") format("woff2");
+      }
+
+      @font-face {
+        /* https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400&text=漢字かんじAT&display=swap */
+        font-family: 'Noto Sans JP';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url(logo.woff2) format('woff2');
+      }
+
+      @font-face {
+        /* https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&text=AT&display=swap */
+        font-family: 'Noto Sans JP';
+        font-style: normal;
+        font-weight: 900;
+        font-display: swap;
+        src: url(icons.woff2) format('woff2');
       }
 
       body {
@@ -28,9 +46,39 @@
         display: inline-block;
       }
 
+      .progress-control {
+        display: flex;
+        align-items: baseline;
+      }
+
+      .progress-control .literal {
+        font-family: "Noto Sans JP", sans-serif;
+        font-weight: 900;
+        margin: 0 5px;
+        font-size: 16px;
+      }
+
+      .progress-control .literal:first-child {
+        margin-left: 10px
+      }
+
+      .progress-control .literal:last-child {
+        margin-right: 10px;
+      }
+
+/*      .kana-size {
+        align-items: baseline;
+      }
+
       .kana-size .literal {
         padding: 0 0 0 5px;
       }
+
+      .kana-size .icon {
+        font-family: "Noto Sans JP", sans-serif;
+        font-weight: 900;
+        margin: 0 5px;
+      }*/
 
       .footer {
         display: flex;
@@ -97,6 +145,7 @@
       }
 
       .app-icon {
+        font-family: "Noto Sans JP", sans-serif;
         width: 32px;
         height: 32px;
         position: relative;
@@ -109,12 +158,12 @@
       .app-icon div {
         position: absolute;
         color: orange;
-        font-size: 17px;
+        font-size: 16px;
         top: 16px;
       }
 
       .app-icon ruby {
-        font-size: 10px;
+        font-size: 9px;
         color: black;
         position: absolute;
         top: 7px;
@@ -130,15 +179,10 @@
       }
 
       .site-name {
-        overflow: scroll;
-        align-items: center;
+        line-height: 18px;
+        align-items: baseline;
         flex: 1;
         margin: 0 0 0 5px;
-      }
-
-      .kana-size input {
-        width: 95%;
-        margin-top: 5px;
       }
 
       .error-overlay {
@@ -167,15 +211,16 @@
 
       <hr />
 
-      <div class="section kana-size">
-        <div>
-          <span class="literal"></span>
-          <span class="value"></span>
-          %
-        </div>
-        <div>
-          <input type="range" min="50" max="90" step="5" />
-        </div>
+      <div class="section progress-control kana-size">
+        <span class="literal" style="font-size: 15px;">A</span>
+        <input type="range" min="50" max="90" step="5" />
+        <span class="literal" style="font-size: 20px;">A</span>
+      </div>
+
+      <div class="section progress-control kana-opacity">
+        <span class="literal" style="opacity: 0.3;">T</span>
+        <input type="range" min="0.5" max="1" step="0.05" />
+        <span class="literal">T</span>
       </div>
 
       <hr />

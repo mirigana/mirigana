@@ -4,17 +4,21 @@
     "description": ""
   },
 
-  "ui_btn_apply": {
-    "message": "應用",
-    "description": ""
+  "ui_popup_error_overlay": {
+    "message": "請重新整理目前頁面以啟用此擴充功能"
   },
 
-  "ui_furigana_size": {
+  "ui_popup_furigana_size": {
     "message": "字體比例:",
     "description": ""
   },
-  "ui_feedback": {
+  "ui_popup_feedback": {
     "message": "問題反饋",
+    "description": ""
+  },
+
+  "ui_btn_apply": {
+    "message": "應用",
     "description": ""
   },
 

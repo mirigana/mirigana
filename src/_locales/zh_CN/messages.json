@@ -4,17 +4,21 @@
     "description": ""
   },
 
-  "ui_btn_apply": {
-    "message": "应用",
-    "description": ""
+  "ui_popup_error_overlay": {
+    "message": "请刷新当前页面来启用这个扩展"
   },
 
-  "ui_furigana_size": {
+  "ui_popup_furigana_size": {
     "message": "字体比例:",
     "description": ""
   },
-  "ui_feedback": {
+  "ui_popup_feedback": {
     "message": "问题反馈",
+    "description": ""
+  },
+
+  "ui_btn_apply": {
+    "message": "应用",
     "description": ""
   },
 
